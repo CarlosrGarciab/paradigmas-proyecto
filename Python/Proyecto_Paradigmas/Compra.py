@@ -34,3 +34,7 @@ class Compra:
     @property
     def total(self):
         return sum(det.subtotal for det in self.__detalles)
+
+# git add .
+# git commit -m "comentario"
+# git push
