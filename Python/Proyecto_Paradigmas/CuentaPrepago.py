@@ -1,0 +1,2 @@
+class CuentaPrepago:
+  pass

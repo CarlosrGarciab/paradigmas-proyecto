@@ -1,0 +1,2 @@
+class CuentaDeuda:
+   pass
