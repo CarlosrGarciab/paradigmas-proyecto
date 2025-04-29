@@ -1,8 +1,9 @@
 class Venta:
-    def __init__(self, id, usuario, fecha, detalles):
+    def __init__(self, id, usuario, fecha, total, detalles):
         self.__id = id
         self.__usuario = usuario
         self.__fecha = fecha
+        self.__total = total
         self.__detalles = detalles  # Lista de DetalleVenta
 
     # |--- Getters ---|
@@ -21,12 +22,12 @@ class Venta:
     def fecha(self):
         return self.__fecha
 
-    # Detalles
-    @property
-    def detalles(self):
-        return self.__detalles
-
     # Total
     @property
     def total(self):
         return sum(det.subtotal for det in self.__detalles)
+    
+    # Detalles
+    @property
+    def detalles(self):
+        return self.__detalles

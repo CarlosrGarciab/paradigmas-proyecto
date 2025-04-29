@@ -1,11 +1,10 @@
 class Producto:
-    def __init__(self, id, nombre, precio, stock, stock_minimo, categoria):
+    def __init__(self, id, nombre, precio, stock, stock_minimo):
         self.__id = id
         self.__nombre = nombre
         self.__precio = precio
         self.__stock = stock
         self.__stock_minimo = stock_minimo
-        self.__categoria = categoria
 
     # |--- Getters y Setters ---|
     # Id
@@ -48,12 +47,16 @@ class Producto:
     @stock_minimo.setter
     def stock_minimo(self, stock_minimo_nuevo):
         self.__stock_minimo = stock_minimo_nuevo
-
-    # Categoría
-    @property
-    def categoria(self):
-        return self.__categoria
-
-    @categoria.setter
-    def categoria(self, categoria_nuevo):
-        self.__categoria = categoria_nuevo
+        
+    # Métodos
+    def actualizar_stock(self, cantidad):
+        self.stock += cantidad
+        
+    def modificar_precio(self, nuevo_precio):
+        self.precio = nuevo_precio
+        
+    def stock_bajo(self):
+        return self.stock <= self.stock_minimo
+        
+    def __str__(self):
+        return f"{self.nombre} (ID: {self.id}) - Precio: {self.precio:.2f} - Stock: {self.stock}"

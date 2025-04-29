@@ -42,6 +42,7 @@ class Pago(ABC):
     def tipo(self, tipo_nuevo):
         self.__tipo = tipo_nuevo
 
+    # Método
     @abstractmethod
     def procesar_pago(self):
         pass

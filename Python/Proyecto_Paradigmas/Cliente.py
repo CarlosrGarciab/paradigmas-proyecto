@@ -1,20 +1,36 @@
 from abc import ABC, abstractmethod
 
 class Cliente(ABC):
-    def _init_(self, nombre):
-        self.__nombre = nombre
+    def _init_(self, id, nombre_completo, tipo):
+        self.__id = id
+        self.__nombre_completo = nombre_completo
+        self.__tipo = tipo
         self.__deuda = 0
         self.__saldo = 0
 
 # |--- Getters y Setters ---|
+# Id
+@property
+def id(self):
+    return self.__id
+
 # Nombre
 @property
-def nombre(self):
+def nombre_completo(self):
     return self.__nombre
 
-@nombre.setter
+@nombre_completo.setter
 def nombre(self, nuevo_nombre):
     self.__nombre = nuevo_nombre
+
+# Tipo    
+@property
+def tipo(self):
+    return self.__tipo
+
+@tipo.setter
+def tipo(self, nuevo_tipo):
+    self.__tipo = nuevo_tipo
 
 # Deuda
 @property
@@ -33,5 +49,9 @@ def saldo(self):
 @saldo.setter
 def saldo(self, valor):
     self.__saldo = valor
+    
+# Métodos
+def __str__(self):
+    return f"{self.nombre_completo()} (ID: {self.id_cliente}, Tipo: {self.tipo})"
 
 # posibles metodos: realizar compra, pagar deuda, tiene_deuda, mostrar_datos(abs)
