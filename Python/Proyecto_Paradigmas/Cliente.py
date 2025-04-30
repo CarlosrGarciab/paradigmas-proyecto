@@ -49,9 +49,7 @@ def saldo(self):
 @saldo.setter
 def saldo(self, valor):
     self.__saldo = valor
-    
-# Métodos
-def __str__(self):
-    return f"{self.nombre_completo()} (ID: {self.id_cliente}, Tipo: {self.tipo})"
 
-# posibles metodos: realizar compra, pagar deuda, tiene_deuda, mostrar_datos(abs)
+# Métodos a implementar
+def realizar_compra():
+    pass
