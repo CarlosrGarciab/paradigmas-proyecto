@@ -413,19 +413,19 @@
     </index>
    </folder>
   </table>
-  <table id="TAB110" populated="true" UUID="d0b50803-3bf6-4333-a4a7-4b111fd1d4c1" name="miembros_cantina" objectType="TABLE" physicalName="miembros_cantina" >
+  <table id="TAB110" populated="true" UUID="d0b50803-3bf6-4333-a4a7-4b111fd1d4c1" name="MiembroCantina" objectType="TABLE" physicalName="MiembroCantina" >
    <remarks></remarks>
    <folder id="FOLTAB1101" populated="true" name="Columns" physicalName="Columns" type="1">
     <column id="COL111" populated="true" UUID="bd62c66d-6d82-4cff-8326-1531b2bfee0c" autoIncrement="true" autoIncrementSequenceName="miembros_cantina_codigo_empleado_seq" defaultValue="" name="codigo_miembros_cantina" nullable="0" physicalName="codigo_miembros_cantina" precision="0" primaryKeySeq="0" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="4" userDefinedTypeUUID="63b011c7-c81f-4c75-8271-632b3c87f727" >
      <remarks></remarks>
     </column>
-    <column id="COL112" populated="true" UUID="b0ac509e-8cf2-4f5f-ab64-8d728b768150" autoIncrement="false" autoIncrementSequenceName="miembros_cantina_nombre_seq" defaultValue="" name="nombre" nullable="0" physicalName="nombre" precision="20" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="12" userDefinedTypeUUID="831ac2d4-0e65-47ec-a0b7-62b7f6b8760a" >
+    <column id="COL112" populated="true" UUID="b0ac509e-8cf2-4f5f-ab64-8d728b768150" autoIncrement="false" autoIncrementSequenceName="MiembroCantina_nombre_seq" defaultValue="" name="nombre" nullable="0" physicalName="nombre" precision="20" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="12" userDefinedTypeUUID="831ac2d4-0e65-47ec-a0b7-62b7f6b8760a" >
      <remarks></remarks>
     </column>
-    <column id="COL113" populated="true" UUID="bd11dff7-7275-4820-8f27-2bfaa3fc826f" autoIncrement="false" autoIncrementSequenceName="miembros_cantina_sueldo_seq" defaultValue="" name="sueldo" nullable="0" physicalName="sueldo" precision="0" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="3" userDefinedTypeUUID="cc1304ea-628a-4fc5-a84a-06ba14759152" >
+    <column id="COL113" populated="true" UUID="bd11dff7-7275-4820-8f27-2bfaa3fc826f" autoIncrement="false" autoIncrementSequenceName="MiembroCantina_sueldo_seq" defaultValue="" name="sueldo" nullable="0" physicalName="sueldo" precision="0" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="3" userDefinedTypeUUID="cc1304ea-628a-4fc5-a84a-06ba14759152" >
      <remarks></remarks>
     </column>
-    <column id="COL114" populated="true" UUID="20c56c81-2aa0-4ae0-8f2f-73d0a9885d89" autoIncrement="false" autoIncrementSequenceName="miembros_cantina_descripcion_seq" defaultValue="" name="descripcion" nullable="1" physicalName="descripcion" precision="30" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="12" userDefinedTypeUUID="831ac2d4-0e65-47ec-a0b7-62b7f6b8760a" >
+    <column id="COL114" populated="true" UUID="20c56c81-2aa0-4ae0-8f2f-73d0a9885d89" autoIncrement="false" autoIncrementSequenceName="MiembroCantina_descripcion_seq" defaultValue="" name="descripcion" nullable="1" physicalName="descripcion" precision="30" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="12" userDefinedTypeUUID="831ac2d4-0e65-47ec-a0b7-62b7f6b8760a" >
      <remarks></remarks>
     </column>
     </folder>
@@ -434,7 +434,7 @@
     <folder id="FOLTAB1102" populated="true" name="Imported Keys" physicalName="Imported Keys" type="2">
     </folder>
     <folder id="FOLTAB1104" populated="true" name="Indices" physicalName="Indices" type="4">
-    <index id="IDX115" populated="true" UUID="b897fee7-379c-486a-b01c-ddb070ed3548" clustered="false" name="miembros_cantina_pk" physicalName="miembros_cantina_pk" primaryKeyIndex="true" unique="false" >
+    <index id="IDX115" populated="true" UUID="b897fee7-379c-486a-b01c-ddb070ed3548" clustered="false" name="MiembroCantina_pk" physicalName="miembros_cantina_pk" primaryKeyIndex="true" unique="false" >
      <index-column id="IDC116" populated="true" UUID="5706dbfd-d755-49db-b104-f864c0d787ab" ascendingOrDescending="UNSPECIFIED" column-ref="COL111" name="codigo_miembros_cantina" physicalName="codigo_miembros_cantina" />
     </index>
    </folder>
@@ -508,9 +508,9 @@
   <table-pane table-ref="TAB76" x="1259" y="143" bgColor="0xeeeeee" fgColor="0x000000" rounded="false" dashed="false"/>
   <table-pane table-ref="TAB83" x="1174" y="274" bgColor="0xeeeeee" fgColor="0x000000" rounded="false" dashed="false"/>
   <table-pane table-ref="TAB89" x="1261" y="33" bgColor="0xeeeeee" fgColor="0x000000" rounded="false" dashed="false"/>
-  <table-pane table-ref="TAB94" x="625" y="464" bgColor="0xeeeeee" fgColor="0x000000" rounded="false" dashed="false"/>
+  <table-pane table-ref="TAB94" x="627" y="463" bgColor="0xeeeeee" fgColor="0x000000" rounded="false" dashed="false"/>
   <table-pane table-ref="TAB105" x="170" y="569" bgColor="0xeeeeee" fgColor="0x000000" rounded="false" dashed="false"/>
-  <table-pane table-ref="TAB110" x="555" y="660" bgColor="0xeeeeee" fgColor="0x000000" rounded="false" dashed="false"/>
+  <table-pane table-ref="TAB110" x="554" y="661" bgColor="0xeeeeee" fgColor="0x000000" rounded="false" dashed="false"/>
   <table-link relationship-ref="REL129" pkConnection="0.5928853754940712" fkConnection="0.3557312252964427" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="72"/>
   <table-link relationship-ref="REL121" pkConnection="0.30985915492957744" fkConnection="0.8235294117647058" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="18"/>
   <table-link relationship-ref="REL131" pkConnection="0.5625" fkConnection="0.46634615384615385" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="72"/>

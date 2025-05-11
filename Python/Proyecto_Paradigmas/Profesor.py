@@ -1,12 +1,10 @@
 from Cliente import Cliente
 
 class Profesor(Cliente):
-    def __init__(self, nombre, id_cliente, grado):
-        super().__init__(nombre, id_cliente)
+    def __init__(self, id_cliente, nombre, grado):
+        super().__init__(id_cliente, nombre)
         self._grado = grado
 
-    # |--- Getters y Setters ---|
-    # Curso
     @property
     def grado(self):
         return self._grado
@@ -15,10 +13,9 @@ class Profesor(Cliente):
     def grado(self, lista_grado):
         self._grado = lista_grado
 
-    # Método mostrar datos
     def __str__(self):
         return (
             f"Nombre: {self.nombre}\n"
-            f"ID: {self.id_cliente}\n"
-            f"grado donde enseña: {self.grado}"
+            f"ID: {self.id}\n"
+            f"Grado donde enseña: {self.grado}"
         )

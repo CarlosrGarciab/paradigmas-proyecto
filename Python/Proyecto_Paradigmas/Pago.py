@@ -1,42 +1,17 @@
 from abc import ABC, abstractmethod
 
 class Pago(ABC):
-    def __init__(self, id, fecha, monto, tipo):
-        self.__id = id
-        self.__fecha = fecha
-        self.__monto = monto
-        self.__tipo = tipo
+    def __init__(self, monto):
+        self._monto = monto
 
-    # |--- Getters y Setters ---|
-    # Id
-    @property
-    def id(self):
-        return self.__id
-
-    # Fecha
-    @property
-    def fecha(self):
-        return self.__fecha
-
-    # Monto
     @property
     def monto(self):
-        return self.__monto
+        return self._monto
 
     @monto.setter
     def monto(self, monto_nuevo):
-        self.__monto = monto_nuevo
+        self._monto = monto_nuevo
 
-    # Tipo
-    @property
-    def tipo(self):
-        return self.__tipo
-
-    @tipo.setter
-    def tipo(self, tipo_nuevo):
-        self.__tipo = tipo_nuevo
-
-    # Método
     @abstractmethod
     def procesar_pago(self):
         pass
