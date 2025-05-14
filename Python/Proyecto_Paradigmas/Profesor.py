@@ -1,8 +1,8 @@
 from Cliente import Cliente
 
 class Profesor(Cliente):
-    def __init__(self, id_cliente, nombre, grado):
-        super().__init__(id_cliente, nombre)
+    def __init__(self, nombre, grado):
+        super().__init__(nombre)
         self._grado = grado
 
     @property

@@ -1,11 +1,12 @@
 class Caja:
     def __init__(self):
-        self._dinero = 0
+        self.dinero = 0.0  # Inicializar el dinero en la caja
 
-    @property
-    def dinero(self):
-        return self._dinero
+    def ingresar_dinero(self, monto):
+        """Agrega dinero a la caja."""
+        if monto < 0:
+            raise ValueError("El monto a ingresar no puede ser negativo.")
+        self.dinero += monto
 
-    @dinero.setter
-    def dinero(self, valor):
-        self._dinero = valor
+    def __str__(self):
+        return f"Dinero en caja: S/{self.dinero:.2f}"
