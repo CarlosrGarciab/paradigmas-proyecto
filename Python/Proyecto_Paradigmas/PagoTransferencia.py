@@ -5,6 +5,7 @@ class PagoTransferencia(Pago):
         super().__init__(monto)
         self._banco = banco
 
-    def procesar_pago(self):
-        self._banco.saldo += self._monto
-        print(f"Pago por transferencia procesado: S/{self._monto:.2f} agregado al banco.")
+    def procesar_pago(self, monto):
+        self._banco.saldo += monto
+        print(f"Pago por transferencia procesado: S/{monto:.2f} agregado al banco.")
+        return True

@@ -1,55 +1,43 @@
-from Caja import Caja
-from Producto import Producto
+from Menu import Menu
 from Inventario import Inventario
-from Venta import Venta
-from Cliente import Cliente
+from Caja import Caja
+from CuentaBanco import CuentaBanco
+from Producto import Producto
+from Alumno import Alumno
+from Profesor import Profesor
 
 def main():
-    # Crear productos
-    producto1 = Producto("Agua", 1.50, 100, 10, "Bebidas")
-    producto2 = Producto("Sandwich", 5.00, 50, 5, "Comidas")
-
-    # Crear inventario
     inventario = Inventario()
-    inventario.agregar_producto(producto1)
-    inventario.agregar_producto(producto2)
-
-    # Crear caja
     caja = Caja()
+    caja.dinero = 100.0
+    banco = CuentaBanco()
+    clientes = []
+    proveedores = []
+    ventas = []
+    compras = []
 
-    # Crear cliente
-    cliente = Cliente("Carlos")
-    print("\n=== Estado inicial del Cliente ===")
-    print(cliente)
+    # Productos de ejemplo
+    p1 = Producto("Pan", 3.0, 20, 5, "Alimentos")
+    p2 = Producto("Empanada", 5.0, 15, 5, "Alimentos")
+    p3 = Producto("Jugo", 4.0, 10, 3, "Bebidas")
+    inventario.agregar_producto(p1)
+    inventario.agregar_producto(p2)
+    inventario.agregar_producto(p3)
 
-    # Recargar saldo prepago desde la caja
-    print("\n=== Recarga de Saldo ===")
-    cliente.recargar_saldo(10.00, caja=caja)  # Recargar S/10.00 desde la caja
-    print(cliente)
+    # Clientes de ejemplo
+    a1 = Alumno("Juan Perez", "3ro A", 20.0, "caja", caja)
+    a2 = Alumno("Ana Ruiz", "2do B", 15.0, "banco", None, banco)
+    prof1 = Profesor("Carlos Gómez", "Matemática")
+    clientes.extend([a1, a2, prof1])
 
-    # Mostrar estado de la caja
-    print("\n=== Estado de la Caja ===")
-    print(caja)
-
-    # Prueba de ventas
-    print("\n=== Prueba de Ventas ===")
-    productos_vendidos = {1: 2, 2: 1}  # 2 aguas y 1 sandwich
-    venta = Venta(productos_vendidos, None, inventario, caja, cliente)
-
-    # Procesar la venta
-    print("\n=== Procesar Venta ===")
-    if venta.procesar_venta():
-        print("Venta realizada con éxito.")
-    else:
-        print("La venta no pudo completarse.")
-
-    # Mostrar estado del cliente después de la venta
-    print("\n=== Estado del Cliente después de la Venta ===")
-    print(cliente)
-
-    # Mostrar estado de la caja después de la venta
-    print("\n=== Estado de la Caja después de la Venta ===")
-    print(caja)
+    menu = Menu(inventario, caja, banco, clientes, proveedores, ventas, compras)
+    menu.mostrar()
 
 if __name__ == "__main__":
     main()
+    
+# git add .
+# git commit -m "comentario"
+# git push
+
+# git pull

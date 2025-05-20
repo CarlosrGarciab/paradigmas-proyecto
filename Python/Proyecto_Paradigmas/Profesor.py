@@ -4,6 +4,7 @@ class Profesor(Cliente):
     def __init__(self, nombre, grado):
         super().__init__(nombre)
         self._grado = grado
+        # La deuda ya está en Cliente, no hace falta redefinirla
 
     @property
     def grado(self):
@@ -16,6 +17,6 @@ class Profesor(Cliente):
     def __str__(self):
         return (
             f"Nombre: {self.nombre}\n"
-            f"ID: {self.id}\n"
-            f"Grado donde enseña: {self.grado}"
+            f"Grado donde enseña: {self.grado}\n"
+            f"Deuda: {self.deuda:.2f}"
         )

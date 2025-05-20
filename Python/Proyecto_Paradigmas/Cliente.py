@@ -60,6 +60,10 @@ class Cliente(ABC):
     def deuda(self):
         return self._deuda
 
+    @deuda.setter
+    def deuda(self, valor):
+        self._deuda = valor
+
     def adquirir_deuda(self, monto):
         if monto <= 0:
             raise ValueError("El monto de la deuda debe ser positivo.")

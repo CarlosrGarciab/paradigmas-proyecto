@@ -9,3 +9,6 @@ class CuentaBanco:
     @saldo.setter
     def saldo(self, valor):
         self._saldo = valor
+
+    def __str__(self):
+        return f"Dinero en banco: S/{self.saldo:.2f}"
