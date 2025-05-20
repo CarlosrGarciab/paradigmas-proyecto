@@ -1,21 +1,28 @@
 class CuentaDeuda:
-   def __init__(self, deuda):
-      self.__deuda = deuda
+    """
+    Representa una cuenta de deuda asociada a un cliente.
+    Permite sumar deuda y pagarla.
+    """
+    def __init__(self, deuda):
+        self.__deuda = deuda
 
-   # Getter
-   @property
-   def deuda(self):
-      return self.__deuda
+    @property
+    def deuda(self):
+        """Deuda actual de la cuenta."""
+        return self.__deuda
 
-   # Métodos
-   def sumar_deuda(self, valor):
-      self.__deuda += valor
+    def sumar_deuda(self, valor):
+        """Agrega un monto a la deuda."""
+        self.__deuda += valor
 
-   def pagar(self, valor):
-      self.__saldo -= valor
+    def pagar(self, valor):
+        """Reduce la deuda al pagar un monto."""
+        self.__deuda -= valor
 
-   def tiene_deuda(self):
-      return self.__saldo > 0
+    def tiene_deuda(self):
+        """Indica si la cuenta tiene deuda pendiente."""
+        return self.__deuda > 0
 
-   def __str__(self):
-      return f"Deuda actual: {self.__saldo:.2f}"
+    def __str__(self):
+        """Representación en texto de la deuda."""
+        return f"Deuda actual: {self.__deuda:.2f}"

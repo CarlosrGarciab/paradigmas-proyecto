@@ -7,7 +7,14 @@ from Proveedor import Proveedor
 from PagoEfectivo import PagoEfectivo
 
 class Menu:
+    """
+    Clase que gestiona la interacción con el usuario a través de menús.
+    Permite registrar ventas, compras, gestionar clientes, proveedores, caja, banco e inventario.
+    """
     def __init__(self, inventario, caja, banco, clientes, proveedores, ventas, compras):
+        """
+        Inicializa el menú con las entidades principales del sistema.
+        """
         self.inventario = inventario
         self.caja = caja
         self.banco = banco
@@ -17,6 +24,9 @@ class Menu:
         self.compras = compras
 
     def mostrar(self):
+        """
+        Muestra el menú principal y gestiona la navegación entre opciones.
+        """
         while True:
             print("\n=== MENÚ PRINCIPAL ===")
             print("1. Registrar venta")
@@ -75,6 +85,9 @@ class Menu:
                 print("Opción no válida. Intente de nuevo.")
                     
     def menu_clientes(self):
+        """
+        Muestra el submenú de clientes y gestiona sus acciones.
+        """
         while True:
             print("\n=== MENÚ DE CLIENTES ===")
             print("1. Registrar cliente")
@@ -105,6 +118,9 @@ class Menu:
                 print("Opción no válida. Intente de nuevo.")
 
     def registrar_venta(self):
+        """
+        Permite registrar una venta, seleccionando productos, cantidades y método de pago.
+        """
         print("\n=== Registrar Venta ===")
         if not self.inventario.productos:
             print("No hay productos en el inventario.")
@@ -215,6 +231,9 @@ class Menu:
             print("La venta no pudo completarse.")
                 
     def registrar_compra(self):
+        """
+        Permite registrar una compra a un proveedor y actualizar el inventario.
+        """
         print("\n=== Registrar Compra ===")
         nombre_proveedor = input("Ingrese el nombre del proveedor: ")
         proveedor = next((p for p in self.proveedores if p.nombre == nombre_proveedor), None)
@@ -259,6 +278,9 @@ class Menu:
             print(f"Error al registrar la compra: {e}")
             
     def registrar_cliente(self):
+        """
+        Permite registrar un nuevo cliente (alumno o profesor).
+        """
         print("\n=== Registrar Cliente ===")
         print("Seleccione el tipo de cliente:")
         print("1. Alumno")
@@ -290,6 +312,9 @@ class Menu:
             print("Tipo de cliente no válido.")
             
     def pagar_deuda_cliente(self):
+        """
+        Permite pagar la deuda de un cliente, eligiendo el monto y el medio de pago.
+        """
         print("\n=== Pagar deuda de cliente ===")
         clientes_con_deuda = [c for c in self.clientes if c.deuda > 0]
         if not clientes_con_deuda:
@@ -321,6 +346,9 @@ class Menu:
             print("Selección inválida.")
             
     def recargar_prepago_cliente(self):
+        """
+        Permite recargar la cuenta prepaga de un alumno, eligiendo el monto y el medio de pago.
+        """
         print("\n=== Recargar cuenta prepaga ===")
         alumnos = [c for c in self.clientes if c.__class__.__name__ == "Alumno"]
         if not alumnos:

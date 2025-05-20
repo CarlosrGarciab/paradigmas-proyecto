@@ -1,8 +1,13 @@
 from DetalleVenta import DetalleVenta
 
 class Venta:
+    """
+    Representa una venta realizada en la cantina.
+    Incluye los detalles de los productos vendidos, el método de pago, el inventario, la caja y el cliente.
+    """
     def __init__(self, productos_vendidos, metodo_pago, inventario, caja, cliente=None):
         """
+        Inicializa la venta con los productos vendidos, método de pago, inventario, caja y cliente.
         productos_vendidos: dict con id_producto como clave y cantidad como valor.
         """
         self.detalles = []
@@ -20,7 +25,9 @@ class Venta:
             self.detalles.append(DetalleVenta(producto, cantidad, producto.precio))
 
     def calcular_total(self):
-        """Calcula el total de la venta y valida el stock."""
+        """
+        Calcula el total de la venta y valida el stock de los productos.
+        """
         total = 0
         for detalle in self.detalles:
             if detalle.cantidad <= 0:
@@ -32,6 +39,9 @@ class Venta:
         return total
 
     def procesar_venta(self):
+        """
+        Procesa la venta: valida el pago, descuenta el stock y registra el ingreso en caja.
+        """
         try:
             self.calcular_total()
             # El método de pago decide si se puede procesar el pago
@@ -54,5 +64,8 @@ class Venta:
             return False
 
     def __str__(self):
+        """
+        Representación en texto de la venta.
+        """
         detalles_str = "\n".join(str(det) for det in self.detalles)
         return f"Detalles de la venta:\n{detalles_str}\nTotal: S/{self.total:.2f}"

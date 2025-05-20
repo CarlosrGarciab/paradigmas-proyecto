@@ -1,12 +1,20 @@
 class Caja:
+    """
+    Representa la caja de la cantina.
+    Permite ingresar dinero y consultar el saldo.
+    """
     def __init__(self):
         self.dinero = 0.0  # Inicializar el dinero en la caja
 
     def ingresar_dinero(self, monto):
-        """Agrega dinero a la caja."""
+        """
+        Agrega dinero a la caja.
+        Lanza un error si el monto es negativo.
+        """
         if monto < 0:
             raise ValueError("El monto a ingresar no puede ser negativo.")
         self.dinero += monto
 
     def __str__(self):
+        """Representación en texto del saldo en caja."""
         return f"Dinero en caja: S/{self.dinero:.2f}"

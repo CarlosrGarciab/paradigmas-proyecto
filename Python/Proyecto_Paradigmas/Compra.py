@@ -1,7 +1,14 @@
 class Compra:
+    """
+    Representa una compra realizada a un proveedor.
+    Incluye el proveedor, la fecha, los detalles de la compra y el total.
+    """
     _id_counter = 1
 
     def __init__(self, id, proveedor, fecha, detalles):
+        """
+        Inicializa la compra con proveedor, fecha y detalles.
+        """
         self.__id = id if id is not None else Compra._id_counter
         Compra._id_counter = max(Compra._id_counter, self.__id + 1)
         self.__proveedor = proveedor
@@ -11,29 +18,37 @@ class Compra:
     # Id
     @property
     def id(self):
+        """ID único de la compra."""
         return self.__id
 
     # Proveedor
     @property
     def proveedor(self):
+        """Proveedor de la compra."""
         return self.__proveedor
 
     # Fecha
     @property
     def fecha(self):
+        """Fecha de la compra."""
         return self.__fecha
 
     # Detalles
     @property
     def detalles(self):
+        """Lista de detalles de la compra."""
         return self.__detalles
 
     # Total
     @property
     def total(self):
+        """Total de la compra (suma de subtotales de los detalles)."""
         return sum(det.subtotal for det in self.__detalles)
 
     def registrar_compra(self, caja, inventario):
+        """
+        Registra la compra: descuenta el dinero de la caja, paga al proveedor y agrega productos al inventario.
+        """
         total_compra = self.total
         if caja.dinero < total_compra:
             raise ValueError("No hay suficiente dinero en caja para pagar al proveedor.")
@@ -54,5 +69,8 @@ class Compra:
         print(f"Compra registrada y pagada a {self.proveedor.nombre} por S/{total_compra:.2f}")
 
     def __str__(self):
+        """
+        Representación en texto de la compra.
+        """
         detalles_str = "\n".join(str(det) for det in self.__detalles)
         return f"\nProveedor: {self.proveedor.nombre}\nFecha: {self.fecha}\nDetalles:\n{detalles_str}\nTotal: S/{self.total:.2f}"

@@ -7,9 +7,13 @@ from Alumno import Alumno
 from Profesor import Profesor
 
 def main():
+    """
+    Función principal del sistema de gestión de cantina.
+    Inicializa los objetos principales y lanza el menú.
+    """
     inventario = Inventario()
     caja = Caja()
-    caja.dinero = 100.0
+    caja.dinero = 100.0  # Dinero inicial en caja
     banco = CuentaBanco()
     clientes = []
     proveedores = []
