@@ -24,7 +24,7 @@ class Menu:
             print("3. Ver inventario")
             print("4. Ver caja")
             print("5. Ver banco")
-            print("6. Clientes (Submenú)")
+            print("6. Clientes (Submenu)")
             print("7. Ver proveedores")
             print("8. Ver historial de ventas")
             print("9. Ver historial de compras")
@@ -60,14 +60,16 @@ class Menu:
                 print("\n=== Historial de Ventas ===")
                 for venta in self.ventas:
                     print(venta)
+                    print()
                 input("Presione Enter para continuar...")
             elif opcion == "9":
                 print("\n=== Historial de Compras ===")
                 for compra in self.compras:
                     print(compra)
+                    print()
                 input("Presione Enter para continuar...")
             elif opcion == "0":
-                print("¡Hasta luego!")
+                print("Cerrando el programa...")
                 break
             else:
                 print("Opción no válida. Intente de nuevo.")

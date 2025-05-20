@@ -29,4 +29,4 @@ class Proveedor:
         self._saldo += monto
 
     def __str__(self):
-        return f"Proveedor: {self.nombre} (ID: {self.id}) - Saldo por cobrar: S/{self.saldo:.2f}"
+        return f"Proveedor: {self.nombre} - Se le Pago: S/{self.saldo:.2f}"

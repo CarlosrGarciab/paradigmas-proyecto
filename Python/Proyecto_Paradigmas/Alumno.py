@@ -1,7 +1,7 @@
 from Cliente import Cliente
 
 class Alumno(Cliente):
-    def __init__(self, nombre, grado, saldo_cuenta_prepaga, metodo_pago, caja=None, banco=None):
+    def __init__(self, nombre, grado, saldo_cuenta_prepaga, metodo_pago, caja = None, banco = None):
         super().__init__(nombre)
         self._grado = grado
         self.saldo_prepago = saldo_cuenta_prepaga

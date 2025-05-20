@@ -55,9 +55,4 @@ class Compra:
 
     def __str__(self):
         detalles_str = "\n".join(str(det) for det in self.__detalles)
-        return f"Compra ID: {self.id}\nProveedor: {self.proveedor.nombre}\nFecha: {self.fecha}\nDetalles:\n{detalles_str}\nTotal: S/{self.total:.2f}"
-# git add .
-# git commit -m "comentario"
-# git push
-
-# git pull
+        return f"\nProveedor: {self.proveedor.nombre}\nFecha: {self.fecha}\nDetalles:\n{detalles_str}\nTotal: S/{self.total:.2f}"
