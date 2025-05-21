@@ -6,7 +6,7 @@ class Inventario:
     Permite agregar, eliminar, buscar y listar productos.
     """
     def __init__(self):
-        self.productos = {}  # clave: id, valor: Producto
+        self._productos = {}  # clave: id, valor: Producto
 
     def agregar_producto(self, p):
         """
@@ -15,18 +15,18 @@ class Inventario:
         """
         if not isinstance(p, Producto):
             raise TypeError("El objeto debe ser una instancia de la clase Producto.")
-        if p.id in self.productos:
-            existente = self.productos[p.id]
+        if p.id in self._productos:
+            existente = self._productos[p.id]
             existente.stock += p.stock
         else:
-            self.productos[p.id] = p
+            self._productos[p.id] = p
 
     def eliminar_producto(self, id):
         """
         Elimina un producto del inventario por su ID.
         """
-        if id in self.productos:
-            del self.productos[id]
+        if id in self._productos:
+            del self._productos[id]
         else:
             raise KeyError(f"Producto con ID {id} no encontrado.")
 
@@ -34,13 +34,13 @@ class Inventario:
         """
         Busca un producto por su ID.
         """
-        return self.productos.get(id)
+        return self._productos.get(id)
 
     def listar_productos(self):
         """
         Devuelve una lista de todos los productos en el inventario.
         """
-        return list(self.productos.values())
+        return list(self._productos.values())
 
     def actualizar_stock(self, id, cantidad):
         """
@@ -56,24 +56,24 @@ class Inventario:
         """
         Devuelve una lista de productos con stock bajo o igual al mínimo.
         """
-        return [p for p in self.productos.values() if p.stock_bajo()]
+        return [p for p in self._productos.values() if p.stock_bajo()]
 
     def valor_total_inventario(self):
         """
         Calcula el valor total del inventario.
         """
-        return sum(p.valor_total_stock() for p in self.productos.values())
+        return sum(p.valor_total_stock() for p in self._productos.values())
 
     def productos_por_categoria(self, categoria):
         """
         Devuelve una lista de productos de una categoría dada.
         """
-        return [p for p in self.productos.values() if p.categoria == categoria]
+        return [p for p in self._productos.values() if p.categoria == categoria]
 
     def __str__(self):
         """
         Representación en texto del inventario.
         """
-        if not self.productos:
+        if not self._productos:
             return "El inventario está vacío."
-        return "\n".join(str(p) for p in self.productos.values())
+        return "\n".join(str(p) for p in self._productos.values())

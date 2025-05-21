@@ -9,7 +9,7 @@ class PagoEfectivo(Pago):
         Inicializa el pago en efectivo con la caja y el monto recibido.
         """
         super().__init__(monto)
-        self.caja = caja
+        self._caja = caja
 
     def procesar_pago(self, monto):
         """

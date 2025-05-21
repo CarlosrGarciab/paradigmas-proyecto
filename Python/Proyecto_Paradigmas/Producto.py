@@ -9,62 +9,62 @@ class Producto:
         """
         Inicializa un producto con nombre, precio, stock, stock mínimo y categoría.
         """
-        self.__id = Producto._id_counter
+        self._id = Producto._id_counter
         Producto._id_counter += 1  # Incrementar el contador
-        self.__nombre = nombre
-        self.__precio = precio
-        self.__stock = stock
-        self.__stock_minimo = stock_minimo
-        self.__categoria = categoria
+        self._nombre = nombre
+        self._precio = precio
+        self._stock = stock
+        self._stock_minimo = stock_minimo
+        self._categoria = categoria
 
     # Id
     @property
     def id(self):
         """ID único del producto (solo lectura)."""
-        return self.__id
+        return self._id
 
     # Nombre
     @property
     def nombre(self):
         """Nombre del producto."""
-        return self.__nombre
+        return self._nombre
 
     @nombre.setter
     def nombre(self, nombre_nuevo):
         """Permite cambiar el nombre del producto."""
-        self.__nombre = nombre_nuevo
+        self._nombre = nombre_nuevo
 
     # Precio
     @property
     def precio(self):
         """Precio de venta del producto."""
-        return self.__precio
+        return self._precio
 
     @precio.setter
     def precio(self, precio_nuevo):
         """Permite cambiar el precio del producto."""
         if precio_nuevo < 0:
             raise ValueError("El precio no puede ser negativo.")
-        self.__precio = precio_nuevo
+        self._precio = precio_nuevo
 
     # Stock
     @property
     def stock(self):
         """Stock actual del producto."""
-        return self.__stock
+        return self._stock
 
     @stock.setter
     def stock(self, stock_nuevo):
         """Permite cambiar el stock del producto."""
         if stock_nuevo < 0:
             raise ValueError("El stock no puede ser negativo.")
-        self.__stock = stock_nuevo
+        self._stock = stock_nuevo
 
     # Stock mínimo
     @property
     def stock_minimo(self):
         """Stock mínimo recomendado para el producto."""
-        return self.__stock_minimo
+        return self._stock_minimo
 
     @stock_minimo.setter
     def stock_minimo(self, stock_minimo_nuevo):
@@ -73,18 +73,18 @@ class Producto:
             raise ValueError("El stock mínimo no puede ser negativo.")
         if stock_minimo_nuevo > self.stock:
             raise ValueError("El stock mínimo no puede ser mayor que el stock actual.")
-        self.__stock_minimo = stock_minimo_nuevo
+        self._stock_minimo = stock_minimo_nuevo
 
     # Categoría
     @property
     def categoria(self):
         """Categoría del producto."""
-        return self.__categoria
+        return self._categoria
 
     @categoria.setter
     def categoria(self, nueva_categoria):
         """Permite cambiar la categoría del producto."""
-        self.__categoria = nueva_categoria
+        self._categoria = nueva_categoria
 
     # Métodos
     def actualizar_stock(self, cantidad):

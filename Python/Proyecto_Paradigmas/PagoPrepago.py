@@ -9,15 +9,15 @@ class PagoPrepago(Pago):
         Inicializa el pago prepago con el cliente y el monto.
         """
         super().__init__(monto)
-        self.cliente = cliente
+        self._cliente = cliente
 
     def procesar_pago(self, monto):
         """
         Procesa el pago prepago, descontando el monto del saldo prepago del cliente.
         """
-        if self.cliente.saldo_prepago >= monto:
-            self.cliente.saldo_prepago -= monto
-            print(f"Pago prepago procesado: S/{monto:.2f} descontado del saldo prepago de {self.cliente.nombre}.")
+        if self._cliente.saldo_prepago >= monto:
+            self._cliente.saldo_prepago -= monto
+            print(f"Pago prepago procesado: S/{monto:.2f} descontado del saldo prepago de {self._cliente.nombre}.")
             return True
         else:
             print("Saldo prepago insuficiente.")

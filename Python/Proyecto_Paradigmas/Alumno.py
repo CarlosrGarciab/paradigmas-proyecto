@@ -5,7 +5,7 @@ class Alumno(Cliente):
     Representa a un alumno cliente de la cantina.
     Incluye grado y saldo prepago inicial.
     """
-    def __init__(self, nombre, grado, saldo_cuenta_prepaga, metodo_pago, caja = None, banco = None):
+    def __init__(self, nombre, grado, saldo_cuenta_prepaga, metodo_pago, caja=None, banco=None):
         """
         Inicializa un alumno con nombre, grado y saldo prepago.
         El saldo prepago se deposita en caja o banco según el método de pago.

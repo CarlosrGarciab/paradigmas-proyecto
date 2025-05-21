@@ -17,13 +17,11 @@ class Cliente(ABC):
         self._saldo_prepago = 0.0
         self._deuda = 0.0
 
-    # Id
     @property
     def id(self):
         """ID único del cliente (solo lectura)."""
         return self._id
 
-    # Nombre
     @property
     def nombre(self):
         """Nombre del cliente."""
@@ -34,7 +32,6 @@ class Cliente(ABC):
         """Permite cambiar el nombre del cliente."""
         self._nombre = nuevo_nombre
 
-    # Saldo prepago
     @property
     def saldo_prepago(self):
         """Saldo prepago disponible del cliente."""
@@ -63,7 +60,6 @@ class Cliente(ABC):
         self._saldo_prepago += monto
         print(f"Saldo recargado: S/{monto:.2f}. Saldo actual: S/{self._saldo_prepago:.2f}")
 
-    # Deuda
     @property
     def deuda(self):
         """Deuda actual del cliente."""

@@ -17,7 +17,7 @@ class Venta:
         self.cliente = cliente
         self.total = 0  # Se calcula en calcular_total()
 
-        # Crear los detalles de venta
+        # Crear los detalles de venta para cada producto vendido
         for id_producto, cantidad in productos_vendidos.items():
             producto = self.inventario.buscar_producto(id_producto)
             if not producto:
@@ -27,20 +27,29 @@ class Venta:
     def calcular_total(self):
         """
         Calcula el total de la venta y valida el stock de los productos.
+        Lanza un error si la cantidad es inválida o si no hay suficiente stock.
         """
         total = 0
         for detalle in self.detalles:
             if detalle.cantidad <= 0:
                 raise ValueError(f"La cantidad para el producto '{detalle.producto.nombre}' debe ser mayor a 0.")
             if detalle.producto.stock < detalle.cantidad:
-                raise ValueError(f"Stock insuficiente para el producto '{detalle.producto.nombre}'. Disponible: {detalle.producto.stock}, solicitado: {detalle.cantidad}.")
+                raise ValueError(
+                    f"Stock insuficiente para el producto '{detalle.producto.nombre}'. "
+                    f"Disponible: {detalle.producto.stock}, solicitado: {detalle.cantidad}."
+                )
             total += detalle.subtotal
         self.total = total
         return total
 
     def procesar_venta(self):
         """
-        Procesa la venta: valida el pago, descuenta el stock y registra el ingreso en caja.
+        Procesa la venta:
+        - Calcula el total y valida el stock.
+        - Procesa el pago usando el método de pago seleccionado.
+        - Actualiza el inventario y elimina productos sin stock.
+        - Ingresa el dinero en la caja.
+        Devuelve True si la venta fue exitosa, False si hubo algún error.
         """
         try:
             self.calcular_total()
@@ -65,7 +74,7 @@ class Venta:
 
     def __str__(self):
         """
-        Representación en texto de la venta.
+        Representación en texto de la venta, mostrando los detalles y el total.
         """
         detalles_str = "\n".join(str(det) for det in self.detalles)
         return f"Detalles de la venta:\n{detalles_str}\nTotal: S/{self.total:.2f}"
