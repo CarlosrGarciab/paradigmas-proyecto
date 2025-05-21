@@ -65,4 +65,4 @@ class Compra:
         Representación en texto de la compra.
         """
         detalles_str = "\n".join(str(det) for det in self._detalles)
-        return f"\nProveedor: {self.proveedor.nombre}\nFecha: {self.fecha}\nDetalles:\n{detalles_str}\nTotal: S/{self.total:.2f}"
+        return f"Proveedor: {self.proveedor.nombre}\nFecha: {self.fecha}\nDetalles:\n{detalles_str}\nTotal: S/{self.total:.2f}"

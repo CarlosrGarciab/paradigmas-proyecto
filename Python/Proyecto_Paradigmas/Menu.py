@@ -132,8 +132,8 @@ class Menu:
                 seleccionados = productos_vendidos.get(p.id, 0)
                 disponible = p.stock - seleccionados
                 print(f"{p.id}: {p.nombre} (Stock disponible: {disponible}, Precio: S/{p.precio:.2f})")
-            id_str = input("Ingrese el ID del producto a vender (o 'fin' para terminar): ")
-            if id_str.lower() == "fin":
+            id_str = input("Ingrese el ID del producto a vender (o '0' para terminar): ")
+            if id_str == "0":
                 break
             try:
                 id_producto = int(id_str)
@@ -163,9 +163,9 @@ class Menu:
         print(f"\nTotal de la venta: S/{total:.2f}")
         print("Seleccione el método de pago:")
         print("1. Efectivo")
-        print("2. Prepago (cliente)")
+        print("2. Prepago")
         print("3. Transferencia bancaria")
-        print("4. Deuda (cliente)")
+        print("4. Deuda")
 
         metodo = input("Opción: ")
         metodo_pago = None
@@ -241,21 +241,37 @@ class Menu:
             self._proveedores.append(proveedor)
         detalles = []
         while True:
-            nombre_producto = input("Nombre del producto a comprar (o 'fin' para terminar): ")
-            if nombre_producto.lower() == "fin":
+            nombre_producto = input("Nombre del producto a comprar (o '0' para terminar): ")
+            if nombre_producto == "0":
                 break
             try:
-                precio_compra = float(input("Precio unitario de compra: "))
-                cantidad = int(input("Cantidad a comprar: "))
+                while True:
+                    precio_compra = float(input("Precio unitario de compra: "))
+                    if precio_compra > 0:
+                        break
+                    print("El precio de compra debe ser mayor a 0.")
+                while True:
+                    cantidad = int(input("Cantidad a comprar: "))
+                    if cantidad > 0:
+                        break
+                    print("La cantidad debe ser mayor a 0.")
                 categoria = input("Categoría del producto: ")
                 producto = next((p for p in self._inventario.listar_productos() if p.nombre == nombre_producto), None)
                 if not producto:
-                    precio_venta = float(input("Precio de venta al público: "))
+                    while True:
+                        precio_venta = float(input("Precio de venta al público: "))
+                        if precio_venta > 0:
+                            break
+                        print("El precio de venta debe ser mayor a 0.")
                     producto = Producto(nombre_producto, precio_venta, 0, 1, categoria)
                 else:
                     actualizar = input(f"El precio de venta actual es S/{producto.precio:.2f}. ¿Desea actualizarlo? (s/n): ")
                     if actualizar.lower() == "s":
-                        nuevo_precio = float(input("Nuevo precio de venta al público: "))
+                        while True:
+                            nuevo_precio = float(input("Nuevo precio de venta al público: "))
+                            if nuevo_precio > 0:
+                                break
+                            print("El precio de venta debe ser mayor a 0.")
                         producto.precio = nuevo_precio
                 detalle = DetalleCompra(producto, cantidad, precio_compra)
                 detalles.append(detalle)
@@ -264,7 +280,7 @@ class Menu:
         if not detalles:
             print("No se ingresaron productos para la compra.")
             return
-        fecha = input("Ingrese la fecha de la compra (ej: 2024-06-01): ")
+        fecha = input("Ingrese la fecha de la compra (ej: 21/05/2025): ")
         compra = Compra(len(self._compras)+1, proveedor, fecha, detalles)
         try:
             compra.registrar_compra(self._caja, self._inventario)
@@ -272,7 +288,7 @@ class Menu:
             self._compras.append(compra)
         except Exception as e:
             print(f"Error al registrar la compra: {e}")
-            
+                
     def registrar_cliente(self):
         """
         Permite registrar un nuevo cliente (alumno o profesor).
@@ -282,6 +298,10 @@ class Menu:
         print("1. Alumno")
         print("2. Profesor")
         tipo = input("Opción: ")
+
+        if tipo not in ("1", "2"):
+            print("Tipo de cliente no válido.")
+            return
 
         nombre = input("Nombre del cliente: ")
 
@@ -299,18 +319,13 @@ class Menu:
             self._clientes.append(alumno)
             print("Alumno registrado con éxito.")
         elif tipo == "2":
-            grado = input("Grado donde enseña el profesor: ")
+            grado = input("Donde enseña el profesor: ")
             from Profesor import Profesor
             profesor = Profesor(nombre, grado)
             self._clientes.append(profesor)
             print("Profesor registrado con éxito.")
-        else:
-            print("Tipo de cliente no válido.")
             
     def pagar_deuda_cliente(self):
-        """
-        Permite pagar la deuda de un cliente, eligiendo el monto y el medio de pago.
-        """
         print("\n=== Pagar deuda de cliente ===")
         clientes_con_deuda = [c for c in self._clientes if c.deuda > 0]
         if not clientes_con_deuda:
@@ -320,6 +335,9 @@ class Menu:
             print(f"{idx+1}. {c.nombre} (Deuda actual: S/{c.deuda:.2f})")
         try:
             idx_cliente = int(input("Seleccione el cliente: ")) - 1
+            if idx_cliente < 0 or idx_cliente >= len(clientes_con_deuda):
+                print("Selección inválida.")
+                return
             cliente = clientes_con_deuda[idx_cliente]
             monto = float(input(f"Ingrese el monto a pagar (deuda actual: S/{cliente.deuda:.2f}): "))
             if monto <= 0 or monto > cliente.deuda:
@@ -340,11 +358,8 @@ class Menu:
             print(f"Deuda pagada correctamente. Deuda restante: S/{cliente.deuda:.2f}")
         except (ValueError, IndexError):
             print("Selección inválida.")
-            
+                    
     def recargar_prepago_cliente(self):
-        """
-        Permite recargar la cuenta prepaga de un alumno, eligiendo el monto y el medio de pago.
-        """
         print("\n=== Recargar cuenta prepaga ===")
         alumnos = [c for c in self._clientes if c.__class__.__name__ == "Alumno"]
         if not alumnos:
@@ -354,6 +369,9 @@ class Menu:
             print(f"{idx+1}. {a.nombre} (Saldo prepago: S/{a.saldo_prepago:.2f})")
         try:
             idx_cliente = int(input("Seleccione el alumno: ")) - 1
+            if idx_cliente < 0 or idx_cliente >= len(alumnos):
+                print("Selección inválida.")
+                return
             alumno = alumnos[idx_cliente]
             monto = float(input("Monto a recargar: "))
             if monto <= 0:

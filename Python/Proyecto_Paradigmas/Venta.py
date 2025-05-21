@@ -1,4 +1,6 @@
 from DetalleVenta import DetalleVenta
+from PagoEfectivo import PagoEfectivo
+from PagoTransferencia import PagoTransferencia
 
 class Venta:
     """
@@ -48,7 +50,7 @@ class Venta:
         - Calcula el total y valida el stock.
         - Procesa el pago usando el método de pago seleccionado.
         - Actualiza el inventario y elimina productos sin stock.
-        - Ingresa el dinero en la caja.
+        - Ingresa el dinero en la caja o banco según corresponda.
         Devuelve True si la venta fue exitosa, False si hubo algún error.
         """
         try:
@@ -64,8 +66,10 @@ class Venta:
                 producto.stock -= detalle.cantidad
                 if producto.stock == 0:
                     self.inventario.eliminar_producto(producto.id)
+                    
+            if isinstance(self.metodo_pago, PagoEfectivo):
+                self.caja.ingresar_dinero(self.total)
 
-            self.caja.ingresar_dinero(self.total)
             print(f"Venta completada. Total: S/{self.total:.2f}")
             return True
         except ValueError as e:
