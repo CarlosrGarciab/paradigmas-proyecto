@@ -13,7 +13,7 @@ def main():
     """
     inventario = Inventario()
     caja = Caja()
-    caja.dinero = 100.0  # Dinero inicial en caja
+    caja.dinero = 1000  # Dinero inicial en caja
     banco = CuentaBanco()
     clientes = []
     proveedores = []
