@@ -9,25 +9,15 @@ class Profesor(Cliente):
         """
         Inicializa un profesor con nombre y grado donde enseña.
         """
-        super().__init__(nombre)
-        self._grado = grado
+        super().__init__(nombre, grado)
 
-    @property
-    def grado(self):
-        """Grado donde enseña el profesor."""
-        return self._grado
-
-    @grado.setter
-    def grado(self, lista_grado):
-        """Permite cambiar el grado donde enseña el profesor."""
-        self._grado = lista_grado
-
+    # Metodos
     def __str__(self):
         """
-        Representación en texto del profesor (sin mostrar el ID).
+        Representación en texto del profesor.
         """
         return (
-            f"Nombre: {self.nombre}\n"
-            f"Grado donde enseña: {self.grado}\n"
-            f"Deuda: {self.deuda:.2f}"
+            f"Nombre: {self._nombre}\n"
+            f"Grado donde enseña: {self._grado}\n"
+            f"Deuda: {self._deuda:.2f}"
         )

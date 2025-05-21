@@ -8,6 +8,7 @@ class Inventario:
     def __init__(self):
         self._productos = {}  # clave: id, valor: Producto
 
+    # Metodos
     def agregar_producto(self, p):
         """
         Agrega un producto al inventario.
@@ -15,11 +16,11 @@ class Inventario:
         """
         if not isinstance(p, Producto):
             raise TypeError("El objeto debe ser una instancia de la clase Producto.")
-        if p.id in self._productos:
-            existente = self._productos[p.id]
-            existente.stock += p.stock
+        if p._id in self._productos:
+            existente = self._productos[p._id]
+            existente._stock += p._stock
         else:
-            self._productos[p.id] = p
+            self._productos[p._id] = p
 
     def eliminar_producto(self, id):
         """
@@ -41,34 +42,6 @@ class Inventario:
         Devuelve una lista de todos los productos en el inventario.
         """
         return list(self._productos.values())
-
-    def actualizar_stock(self, id, cantidad):
-        """
-        Actualiza el stock de un producto sumando la cantidad indicada.
-        """
-        producto = self.buscar_producto(id)
-        if producto:
-            producto.actualizar_stock(cantidad)
-        else:
-            raise KeyError(f"Producto con ID {id} no encontrado.")
-
-    def productos_con_stock_bajo(self):
-        """
-        Devuelve una lista de productos con stock bajo o igual al mínimo.
-        """
-        return [p for p in self._productos.values() if p.stock_bajo()]
-
-    def valor_total_inventario(self):
-        """
-        Calcula el valor total del inventario.
-        """
-        return sum(p.valor_total_stock() for p in self._productos.values())
-
-    def productos_por_categoria(self, categoria):
-        """
-        Devuelve una lista de productos de una categoría dada.
-        """
-        return [p for p in self._productos.values() if p.categoria == categoria]
 
     def __str__(self):
         """

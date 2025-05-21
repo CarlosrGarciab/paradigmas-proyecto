@@ -11,10 +11,11 @@ class PagoDeuda(Pago):
         super().__init__(monto)
         self._cliente = cliente
 
+    # Metodos
     def procesar_pago(self, monto):
         """
         Procesa el pago por deuda, sumando el monto a la deuda del cliente.
         """
-        self._cliente.deuda += monto
-        print(f"Deuda agregada: S/{monto:.2f} a la cuenta de {self._cliente.nombre}. Deuda actual: S/{self._cliente.deuda:.2f}")
+        self._cliente._deuda += monto
+        print(f"Deuda agregada: S/{monto:.2f} a la cuenta de {self._cliente._nombre}. Deuda actual: S/{self._cliente._deuda:.2f}")
         return True

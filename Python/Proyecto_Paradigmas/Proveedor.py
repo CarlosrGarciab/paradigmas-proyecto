@@ -12,11 +12,12 @@ class Proveedor:
         self._id = Proveedor._id_counter
         Proveedor._id_counter += 1
         self._nombre = nombre
-        self._saldo = 0.0  # Saldo a favor del proveedor (por cobrar)
+        self._saldo = 0.0
 
+    # Getters y Setters
     @property
     def id(self):
-        """ID único del proveedor (solo lectura)."""
+        """ID único del proveedor."""
         return self._id
 
     @property
@@ -34,6 +35,7 @@ class Proveedor:
         """Saldo a favor del proveedor."""
         return self._saldo
 
+    # Metodos
     def recibir_pago(self, monto):
         """
         Suma un pago al saldo del proveedor.
@@ -47,4 +49,4 @@ class Proveedor:
         """
         Representación en texto del proveedor.
         """
-        return f"Proveedor: {self.nombre} - Se le Pago: S/{self.saldo:.2f}"
+        return f"Proveedor: {self._nombre} - Se le Pago: S/{self._saldo:.2f}"

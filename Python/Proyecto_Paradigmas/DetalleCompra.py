@@ -8,6 +8,7 @@ class DetalleCompra:
         self._cantidad = cantidad
         self._costo_unitario = costo_unitario
 
+    # Getters y Setters
     @property
     def producto(self):
         """Producto comprado."""
@@ -38,8 +39,9 @@ class DetalleCompra:
         """Subtotal de este detalle (cantidad x costo unitario)."""
         return self._cantidad * self._costo_unitario
 
+    # Metodos
     def __str__(self):
         """
         Representación en texto del detalle de compra.
         """
-        return f"{self.cantidad} x {self.producto.nombre} a S/{self.costo_unitario:.2f} c/u = S/{self.subtotal:.2f}"
+        return f"{self._cantidad} x {self._producto._nombre} a S/{self._costo_unitario:.2f} c/u = S/{self.subtotal:.2f}"

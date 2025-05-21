@@ -6,6 +6,7 @@ class CuentaBanco:
     def __init__(self):
         self._saldo = 0
 
+    # Getters y Setters
     @property
     def saldo(self):
         """Saldo actual en el banco."""
@@ -16,6 +17,9 @@ class CuentaBanco:
         """Permite actualizar el saldo del banco."""
         self._saldo = valor
 
+    # Metodos
     def __str__(self):
-        """Representación en texto del saldo bancario."""
-        return f"Dinero en banco: S/{self.saldo:.2f}"
+        """
+        Representación en texto del saldo bancario.
+        """
+        return f"Dinero en banco: S/{self._saldo:.2f}"

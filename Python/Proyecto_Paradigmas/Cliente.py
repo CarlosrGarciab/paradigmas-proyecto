@@ -3,23 +3,24 @@ from abc import ABC
 class Cliente(ABC):
     """
     Clase abstracta base para representar un cliente de la cantina.
-    Gestiona nombre, saldo prepago y deuda.
+    Gestiona nombre, grado y deuda.
     """
-    _id_counter = 1  # Variable de clase para autoincremento de IDs
+    _id_counter = 1  # Variable para autoincremento de IDs
 
-    def __init__(self, nombre):
+    def __init__(self, nombre, grado):
         """
-        Inicializa un cliente con nombre, saldo prepago y deuda en 0.
+        Inicializa un cliente con su id, nombre, grado y deuda en 0.
         """
         self._id = Cliente._id_counter
         Cliente._id_counter += 1
         self._nombre = nombre
-        self._saldo_prepago = 0.0
+        self._grado = grado
         self._deuda = 0.0
 
+    # Getters y Setters
     @property
     def id(self):
-        """ID único del cliente (solo lectura)."""
+        """ID unico del cliente."""
         return self._id
 
     @property
@@ -33,32 +34,14 @@ class Cliente(ABC):
         self._nombre = nuevo_nombre
 
     @property
-    def saldo_prepago(self):
-        """Saldo prepago disponible del cliente."""
-        return self._saldo_prepago
+    def grado(self):
+        """Grado del cliente."""
+        return self._grado
 
-    @saldo_prepago.setter
-    def saldo_prepago(self, nuevo_saldo):
-        """Permite actualizar el saldo prepago del cliente."""
-        if nuevo_saldo < 0:
-            raise ValueError("El saldo prepago no puede ser negativo.")
-        self._saldo_prepago = nuevo_saldo
-
-    def recargar_saldo(self, monto, caja=None, banco=None):
-        """
-        Recarga saldo en la cuenta prepaga del cliente.
-        El dinero debe ser registrado en la caja o en el banco.
-        """
-        if monto <= 0:
-            raise ValueError("El monto de recarga debe ser positivo.")
-        if caja:
-            caja.ingresar_dinero(monto)
-        elif banco:
-            banco.ingresar_dinero(monto)
-        else:
-            raise ValueError("Debe especificar si el dinero proviene de la caja o del banco.")
-        self._saldo_prepago += monto
-        print(f"Saldo recargado: S/{monto:.2f}. Saldo actual: S/{self._saldo_prepago:.2f}")
+    @grado.setter
+    def grado(self, valor):
+        """Permite cambiar el grado del cliente."""
+        self._grado = valor
 
     @property
     def deuda(self):
@@ -70,6 +53,7 @@ class Cliente(ABC):
         """Permite actualizar la deuda del cliente."""
         self._deuda = valor
 
+    # Métodos
     def adquirir_deuda(self, monto):
         """
         Suma una nueva deuda al cliente.
@@ -92,6 +76,6 @@ class Cliente(ABC):
 
     def __str__(self):
         """
-        Representación en texto del cliente (sin mostrar el ID).
+        Representación en texto del cliente.
         """
-        return f"Cliente: {self.nombre} - Saldo prepago: S/{self.saldo_prepago:.2f} - Deuda: S/{self.deuda:.2f}"
+        return f"Cliente: {self._nombre} - Grado: {self._grado} - Deuda: S/{self._deuda:.2f}"

@@ -11,10 +11,11 @@ class PagoTransferencia(Pago):
         super().__init__(monto)
         self._banco = banco
 
+    # Metodos
     def procesar_pago(self, monto):
         """
         Procesa el pago por transferencia, sumando el monto al banco.
         """
-        self._banco.saldo += monto
+        self._banco._saldo += monto
         print(f"Pago por transferencia procesado: S/{monto:.2f} agregado al banco.")
         return True

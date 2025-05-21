@@ -4,7 +4,7 @@ class Caja:
     Permite ingresar dinero y consultar el saldo.
     """
     def __init__(self):
-        self._dinero = 0.0
+        self._dinero = 0
 
     @property
     def dinero(self):
@@ -19,12 +19,13 @@ class Caja:
     def ingresar_dinero(self, monto):
         """
         Agrega dinero a la caja.
-        Lanza un error si el monto es negativo.
         """
         if monto < 0:
             raise ValueError("El monto a ingresar no puede ser negativo.")
         self._dinero += monto
 
     def __str__(self):
-        """Representación en texto del saldo en caja."""
-        return f"Dinero en caja: S/{self.dinero:.2f}"
+        """
+        Representación en texto del saldo en caja.
+        """
+        return f"Dinero en caja: S/{self._dinero:.2f}"

@@ -2,9 +2,6 @@ from Menu import Menu
 from Inventario import Inventario
 from Caja import Caja
 from CuentaBanco import CuentaBanco
-from Producto import Producto
-from Alumno import Alumno
-from Profesor import Profesor
 
 def main():
     """
@@ -13,7 +10,7 @@ def main():
     """
     inventario = Inventario()
     caja = Caja()
-    caja.dinero = 1000  # Dinero inicial en caja
+    caja._dinero = 1000  # Dinero inicial en caja
     banco = CuentaBanco()
     clientes = []
     proveedores = []
@@ -25,6 +22,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
     
 # git add .
 # git commit -m "comentario"
