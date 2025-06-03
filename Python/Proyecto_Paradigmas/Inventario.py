@@ -42,6 +42,12 @@ class Inventario:
         Devuelve una lista de todos los productos en el inventario.
         """
         return list(self._productos.values())
+    
+    def productos_bajo_stock(self):
+        """
+        Devuelve una lista de productos cuyo stock está por debajo del mínimo.
+        """
+        return [p for p in self._productos.values() if p._stock <= p._stock_minimo]
 
     def __str__(self):
         """

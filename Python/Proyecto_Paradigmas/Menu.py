@@ -3,15 +3,15 @@ from Venta import Venta
 from Compra import Compra
 from Proveedor import Proveedor
 
+def input_sn(mensaje):
+    while True:
+        resp = input(mensaje + " (s/n): ").strip().lower()
+        if resp in ("s", "n"):
+            return resp == "s"
+        print("Por favor, ingrese 's' para sí o 'n' para no.")
+
 class Menu:
-    """
-    Clase que gestiona la interacción con el usuario a través de menús.
-    Permite registrar ventas, compras, gestionar clientes, proveedores, caja, banco e inventario.
-    """
     def __init__(self, inventario, caja, banco, clientes, proveedores, ventas, compras):
-        """
-        Inicializa el menú con las entidades principales del sistema.
-        """
         self._inventario = inventario
         self._caja = caja
         self._banco = banco
@@ -21,20 +21,22 @@ class Menu:
         self._compras = compras
 
     def mostrar(self):
-        """
-        Muestra el menú principal y gestiona la navegación entre opciones.
-        """
         while True:
+            bajo_stock = self._inventario.productos_bajo_stock()
+            if bajo_stock:
+                print("\nALERTA: Productos con bajo stock")
+                for p in bajo_stock:
+                    print(f"- {p._nombre} (Stock: {p._stock}, Mínimo: {p._stock_minimo})")
+                    input("Precione Enter para continuar...")
             print("\n=== MENU PRINCIPAL ===")
             print("1. Registrar venta")
             print("2. Registrar compra")
-            print("3. Ver inventario")
-            print("4. Ver caja")
-            print("5. Ver banco")
-            print("6. Clientes (Submenu)")
-            print("7. Ver proveedores")
-            print("8. Ver historial de ventas")
-            print("9. Ver historial de compras")
+            print("3. Productos")
+            print("4. Caja/Banco")
+            print("5. Proveedores")
+            print("6. Clientes")
+            print("7. Ventas")
+            print("8. Compras")
             print("0. Salir")
             opcion = input("Seleccione una opción: ")
 
@@ -45,53 +47,139 @@ class Menu:
                 self.registrar_compra()
                 input("Presione Enter para continuar...")
             elif opcion == "3":
-                print("\n=== Inventario ===")
-                print(self._inventario)
-                input("Presione Enter para continuar...")
+                self.menu_productos()
             elif opcion == "4":
-                print("\n=== Caja ===")
-                print(self._caja)
-                input("Presione Enter para continuar...")
+                self.menu_caja_banco()
             elif opcion == "5":
-                print("\n=== Banco ===")
-                print(self._banco)
-                input("Presione Enter para continuar...")
+                self.menu_proveedores()
             elif opcion == "6":
                 self.menu_clientes()
             elif opcion == "7":
-                print("\n=== Proveedores ===")
-                for proveedor in self._proveedores:
-                    print(proveedor)
+                self.ver_ventas()
                 input("Presione Enter para continuar...")
             elif opcion == "8":
-                print("\n=== Historial de Ventas ===")
-                for venta in self._ventas:
-                    print(venta)
-                    print()
-                input("Presione Enter para continuar...")
-            elif opcion == "9":
-                print("\n=== Historial de Compras ===")
-                for compra in self._compras:
-                    print(compra)
-                    print()
+                self.ver_compras()
                 input("Presione Enter para continuar...")
             elif opcion == "0":
                 print("Cerrando el programa...")
                 break
             else:
                 print("Opción no válida. Intente de nuevo.")
-    
-    # Submenu de clientes                
+                
+    def ver_ventas(self):
+        print("\n=== HISTORIAL DE VENTAS Y TOTAL ===")
+        total = 0
+        for venta in self._ventas:
+            print(venta)
+            print()
+            total += venta.total
+        print(f"Total vendido: S/{total:.2f}")
+
+    def ver_compras(self):
+        print("\n=== HISTORIAL DE COMPRAS Y TOTAL ===")
+        total = 0
+        for compra in self._compras:
+            print(compra)
+            print()
+            total += compra.total
+        print(f"Total comprado: S/{total:.2f}")
+
+
+    # Submenú de productos
+    def menu_productos(self):
+        while True:
+            print("\n=== MENÚ DE PRODUCTOS ===")
+            print("1. Ver inventario")
+            print("2. Agregar producto")
+            print("3. Editar producto")
+            print("4. Eliminar producto")
+            print("0. Volver")
+            opcion = input("Seleccione una opción: ")
+            if opcion == "1":
+                print(self._inventario)
+                input("Presione Enter para continuar...")
+            elif opcion == "2":
+                self.agregar_producto()
+                input("Presione Enter para continuar...")
+            elif opcion == "3":
+                self.editar_producto()
+                input("Presione Enter para continuar...")
+            elif opcion == "4":
+                self.eliminar_producto()
+                input("Presione Enter para continuar...")
+            elif opcion == "0":
+                break
+            else:
+                print("Opción no válida.")
+
+    # Submenú de caja y banco
+    def menu_caja_banco(self):
+        while True:
+            print("\n=== MENÚ DE CAJA Y BANCO ===")
+            print("1. Ver caja")
+            print("2. Ver banco")
+            print("3. Editar dinero en caja")
+            print("0. Volver")
+            opcion = input("Seleccione una opción: ")
+            if opcion == "1":
+                print(self._caja)
+                input("Presione Enter para continuar...")
+            elif opcion == "2":
+                print(self._banco)
+                input("Presione Enter para continuar...")
+            elif opcion == "3":
+                self.editar_dinero_caja()
+                input("Presione Enter para continuar...")
+            elif opcion == "0":
+                break
+            else:
+                print("Opción no válida.")
+
+    def editar_dinero_caja(self):
+        print("\n=== Editar Dinero en Caja ===")
+        print(f"Dinero actual en caja: S/{self._caja._dinero:.2f}")
+        try:
+            nuevo_monto = float(input("Nuevo monto en caja: "))
+            descripcion = input("Motivo del cambio: ")
+            self._caja._dinero = nuevo_monto
+            print(f"Dinero en caja actualizado. Motivo: {descripcion}")
+        except ValueError:
+            print("Monto inválido.")
+
+    # Submenú de proveedores
+    def menu_proveedores(self):
+        while True:
+            print("\n=== MENÚ DE PROVEEDORES ===")
+            print("1. Ver proveedores")
+            print("2. Editar proveedor")
+            print("3. Eliminar proveedor")
+            print("0. Volver")
+            opcion = input("Seleccione una opción: ")
+            if opcion == "1":
+                for proveedor in self._proveedores:
+                    print(proveedor)
+                input("Presione Enter para continuar...")
+            elif opcion == "2":
+                self.editar_proveedor()
+                input("Presione Enter para continuar...")
+            elif opcion == "3":
+                self.eliminar_proveedor()
+                input("Presione Enter para continuar...")
+            elif opcion == "0":
+                break
+            else:
+                print("Opción no válida.")
+
+    # Submenú de clientes                
     def menu_clientes(self):
-        """
-        Muestra el submenu de clientes y gestiona sus acciones.
-        """
         while True:
             print("\n=== MENU DE CLIENTES ===")
             print("1. Registrar cliente")
             print("2. Ver clientes")
             print("3. Recargar cuenta prepaga")
             print("4. Pagar deuda")
+            print("5. Editar cliente")
+            print("6. Eliminar cliente")
             print("0. Volver al menú principal")
             opcion = input("Seleccione una opción: ")
 
@@ -110,6 +198,12 @@ class Menu:
             elif opcion == "4":
                 self.pagar_deuda_cliente()
                 input("Presione Enter para continuar...")
+            elif opcion == "5":
+                self.editar_cliente()
+                input("Presione Enter para continuar...")
+            elif opcion == "6":
+                self.eliminar_cliente()
+                input("Presione Enter para continuar...")
             elif opcion == "0":
                 break
             else:
@@ -117,9 +211,6 @@ class Menu:
 
     # Método para registrar ventas
     def registrar_venta(self):
-        """
-        Permite registrar una venta, seleccionando productos, cantidades y método de pago.
-        """
         print("\n=== Registrar Venta ===")
         if not self._inventario.listar_productos():
             print("No hay productos en el inventario.")
@@ -153,7 +244,6 @@ class Menu:
             print("No se seleccionaron productos para la venta.")
             return
 
-        # Calcular el total de la venta
         total = 0
         for id_producto, cantidad in productos_vendidos.items():
             producto = self._inventario.buscar_producto(id_producto)
@@ -170,7 +260,6 @@ class Menu:
         metodo_pago = None
         cliente = None
 
-        # Efectivo
         if metodo == "1":
             monto_pago = float(input("Ingrese el monto recibido en efectivo: "))
             from PagoEfectivo import PagoEfectivo
@@ -185,7 +274,6 @@ class Menu:
                 print("La venta no pudo completarse.")
             return
 
-        # Prepago
         elif metodo == "2":
             alumnos = [c for c in self._clientes if c.__class__.__name__ == "Alumno"]
             if not alumnos:
@@ -206,12 +294,10 @@ class Menu:
                 print("La venta no pudo completarse.")
             return
         
-        # Transferencia bancaria
         elif metodo == "3":
             from PagoTransferencia import PagoTransferencia
             metodo_pago = PagoTransferencia(self._banco, total)
         
-        # Deuda
         elif metodo == "4":
             if not self._clientes:
                 print("No hay clientes registrados para deuda.")
@@ -233,12 +319,8 @@ class Menu:
             self._ventas.append(venta)
         else:
             print("La venta no pudo completarse.")
-    
-    # Método para registrar compras            
+
     def registrar_compra(self):
-        """
-        Permite registrar una compra a un proveedor y actualizar el inventario.
-        """
         print("\n=== Registrar Compra ===")
         nombre_proveedor = input("Ingrese el nombre del proveedor: ")
         proveedor = next((p for p in self._proveedores if p._nombre == nombre_proveedor), None)
@@ -251,6 +333,7 @@ class Menu:
             if nombre_producto == "0":
                 break
             try:
+                disponible_venta = input_sn("¿El producto estará disponible para la venta?")
                 while True:
                     precio_compra = float(input("Precio unitario de compra: "))
                     if precio_compra > 0:
@@ -261,40 +344,34 @@ class Menu:
                     if cantidad > 0:
                         break
                     print("La cantidad debe ser mayor a 0.")
-                categoria = input("Categoría del producto: ")
-                producto = next((p for p in self._inventario.listar_productos() if p._nombre == nombre_producto), None)
-                if not producto:
+                if disponible_venta:
                     while True:
                         precio_venta = float(input("Precio de venta al público: "))
                         if precio_venta > 0:
                             break
                         print("El precio de venta debe ser mayor a 0.")
-                    # CORREGIDO: solo pasar nombre, precio, stock, categoria
-                    producto = Producto(nombre_producto, precio_venta, 0, categoria)
+                    categoria = input("Categoría del producto: ")
+                    producto = Producto(nombre_producto, precio_venta, cantidad, categoria)
+                    self._inventario.agregar_producto(producto)
+                    productos_comprados[nombre_producto] = (producto, cantidad, precio_compra, disponible_venta)
                 else:
-                    actualizar = input(f"El precio de venta actual es S/{producto._precio:.2f}. ¿Desea actualizarlo? (s/n): ")
-                    if actualizar.lower() == "s":
-                        while True:
-                            nuevo_precio = float(input("Nuevo precio de venta al público: "))
-                            if nuevo_precio > 0:
-                                break
-                            print("El precio de venta debe ser mayor a 0.")
-                        producto._precio = nuevo_precio
-                productos_comprados[nombre_producto] = (producto, cantidad, precio_compra)
+                    productos_comprados[nombre_producto] = (None, cantidad, precio_compra, disponible_venta)
             except ValueError:
                 print("Entrada inválida.")
         if not productos_comprados:
             print("No se ingresaron productos para la compra.")
             return
         fecha = input("Ingrese la fecha de la compra (ej: 21/05/2025): ")
+        total_compra = sum(cantidad * precio_compra for _, cantidad, precio_compra, _ in productos_comprados.values())
+        if self._caja._dinero < total_compra:
+            print("No hay suficiente dinero en caja para pagar al proveedor.")
+            return
+        self._caja._dinero -= total_compra
+        proveedor.recibir_pago(total_compra)
         compra = Compra(proveedor, fecha, productos_comprados)
-        try:
-            compra.registrar_compra(self._caja, self._inventario)
-            print("Compra registrada con éxito.")
-            self._compras.append(compra)
-        except Exception as e:
-            print(f"Error al registrar la compra: {e}")
-    
+        self._compras.append(compra)
+        print(f"Compra registrada y pagada a {proveedor._nombre} por S/{total_compra:.2f}")
+
     # Método para registrar clientes                
     def registrar_cliente(self):
         """
@@ -333,7 +410,7 @@ class Menu:
             profesor = Profesor(nombre, grado)
             self._clientes.append(profesor)
             print("Profesor registrado con éxito.")
-    
+
     # Método para pagar deuda del cliente        
     def pagar_deuda_cliente(self):
         print("\n=== Pagar deuda de cliente ===")
@@ -368,7 +445,7 @@ class Menu:
             print(f"Deuda pagada correctamente. Deuda restante: S/{cliente._deuda:.2f}")
         except (ValueError, IndexError):
             print("Selección inválida.")
-    
+
     # Método para recargar cuenta prepaga del cliente (Solo para alumnos)                
     def recargar_prepago_cliente(self):
         print("\n=== Recargar cuenta prepaga ===")
@@ -403,3 +480,136 @@ class Menu:
             print(f"Saldo recargado correctamente. Nuevo saldo prepago: S/{alumno._saldo_prepago:.2f}")
         except (ValueError, IndexError):
             print("Selección inválida.")
+
+    def agregar_producto(self):
+        print("\n=== Agregar Producto para la Venta ===")
+        nombre = input("Nombre del producto: ")
+        precio = float(input("Precio de venta: "))
+        stock = int(input("Stock inicial: "))
+        categoria = input("Categoría: ")
+        producto = Producto(nombre, precio, stock, categoria)
+        self._inventario.agregar_producto(producto)
+        print("Producto agregado al inventario.")
+
+    # --- NUEVAS FUNCIONES DE EDICIÓN Y ELIMINACIÓN ---
+
+    def editar_cliente(self):
+        print("\n=== Editar Cliente ===")
+        if not self._clientes:
+            print("No hay clientes registrados.")
+            return
+        for idx, cliente in enumerate(self._clientes):
+            print(f"{idx+1}. {cliente._nombre}")
+        try:
+            idx_cliente = int(input("Seleccione el cliente a editar: ")) - 1
+            cliente = self._clientes[idx_cliente]
+            nuevo_nombre = input(f"Nuevo nombre (actual: {cliente._nombre}): ") or cliente._nombre
+            nuevo_grado = input(f"Nuevo grado (actual: {cliente._grado}): ") or cliente._grado
+            cliente._nombre = nuevo_nombre
+            cliente._grado = nuevo_grado
+            print("Cliente editado correctamente.")
+        except (ValueError, IndexError):
+            print("Selección inválida.")
+
+    def eliminar_cliente(self):
+        print("\n=== Eliminar Cliente ===")
+        if not self._clientes:
+            print("No hay clientes registrados.")
+            return
+        for idx, cliente in enumerate(self._clientes):
+            print(f"{idx+1}. {cliente._nombre}")
+        try:
+            idx_cliente = int(input("Seleccione el cliente a eliminar: ")) - 1
+            cliente = self._clientes.pop(idx_cliente)
+            print(f"Cliente '{cliente._nombre}' eliminado correctamente.")
+        except (ValueError, IndexError):
+            print("Selección inválida.")
+
+    def editar_producto(self):
+        print("\n=== Editar Producto ===")
+        productos = self._inventario.listar_productos()
+        if not productos:
+            print("No hay productos en el inventario.")
+            return
+        for p in productos:
+            print(f"{p._id}: {p._nombre} (Stock: {p._stock}, Precio: S/{p._precio:.2f})")
+        try:
+            id_producto = int(input("Ingrese el ID del producto a editar: "))
+            producto = self._inventario.buscar_producto(id_producto)
+            if not producto:
+                print("Producto no encontrado.")
+                return
+            nuevo_nombre = input(f"Nuevo nombre (actual: {producto._nombre}): ") or producto._nombre
+            nuevo_precio = input(f"Nuevo precio (actual: {producto._precio}): ")
+            nuevo_stock = input(f"Nuevo stock (actual: {producto._stock}): ")
+            nueva_categoria = input(f"Nueva categoría (actual: {producto._categoria}): ") or producto._categoria
+            producto._nombre = nuevo_nombre
+            if nuevo_precio:
+                producto._precio = float(nuevo_precio)
+            if nuevo_stock:
+                producto._stock = int(nuevo_stock)
+            producto._categoria = nueva_categoria
+            print("Producto editado correctamente.")
+        except ValueError:
+            print("Entrada inválida.")
+
+    def eliminar_producto(self):
+        print("\n=== Eliminar Producto ===")
+        productos = self._inventario.listar_productos()
+        if not productos:
+            print("No hay productos en el inventario.")
+            return
+        for p in productos:
+            print(f"{p._id}: {p._nombre} (Stock: {p._stock})")
+        try:
+            id_producto = int(input("Ingrese el ID del producto a eliminar: "))
+            self._inventario.eliminar_producto(id_producto)
+            print("Producto eliminado correctamente.")
+        except (ValueError, KeyError):
+            print("Producto no encontrado o entrada inválida.")
+
+    def editar_proveedor(self):
+        print("\n=== Editar Proveedor ===")
+        if not self._proveedores:
+            print("No hay proveedores registrados.")
+            return
+        for idx, proveedor in enumerate(self._proveedores):
+            print(f"{idx+1}. {proveedor._nombre}")
+        try:
+            idx_prov = int(input("Seleccione el proveedor a editar: ")) - 1
+            proveedor = self._proveedores[idx_prov]
+            nuevo_nombre = input(f"Nuevo nombre (actual: {proveedor._nombre}): ") or proveedor._nombre
+            proveedor._nombre = nuevo_nombre
+            print("Proveedor editado correctamente.")
+        except (ValueError, IndexError):
+            print("Selección inválida.")
+
+    def eliminar_proveedor(self):
+        print("\n=== Eliminar Proveedor ===")
+        if not self._proveedores:
+            print("No hay proveedores registrados.")
+            return
+        for idx, proveedor in enumerate(self._proveedores):
+            print(f"{idx+1}. {proveedor._nombre}")
+        try:
+            idx_prov = int(input("Seleccione el proveedor a eliminar: ")) - 1
+            proveedor = self._proveedores.pop(idx_prov)
+            print(f"Proveedor '{proveedor._nombre}' eliminado correctamente.")
+        except (ValueError, IndexError):
+            print("Selección inválida.")
+    
+    def reporte_ventas(self):
+        print("\n=== REPORTE DE VENTAS ===")
+        total = 0
+        for venta in self._ventas:
+            print(venta)
+            total += venta.total
+        print(f"Total vendido: S/{total:.2f}")
+
+    def reporte_compras(self):
+        print("\n=== REPORTE DE COMPRAS ===")
+        total = 0
+        for compra in self._compras:
+            print(compra)
+            total += compra.total
+        print(f"Total comprado: S/{total:.2f}")

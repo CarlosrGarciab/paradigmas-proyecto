@@ -10,16 +10,23 @@ class Compra:
     def __init__(self, proveedor, fecha, productos_comprados):
         """
         Inicializa la compra con su id, proveedor, fecha y productos_comprados.
-        productos_comprados: diccionario con nombre_producto como clave y tupla (producto, cantidad, precio_compra) como valor.
+        productos_comprados: diccionario con nombre_producto como clave y tupla (producto, cantidad, precio_compra, disponible_venta) como valor.
         """
         self._id = Compra._id_counter
         Compra._id_counter += 1
         self._proveedor = proveedor
         self._fecha = fecha
-        # Crear los detalles internamente a partir del diccionario recibido
         self._detalles = []
-        for producto, cantidad, precio_compra in productos_comprados.values():
-            self._detalles.append(DetalleCompra(producto, cantidad, precio_compra))
+        for producto, cantidad, precio_compra, _ in productos_comprados.values():
+            # Si el producto es None (insumo no para la venta), crea un detalle con nombre genérico
+            if producto is None:
+                class Insumo:
+                    def __init__(self, nombre):
+                        self._nombre = nombre
+                insumo = Insumo("INSUMO")
+                self._detalles.append(DetalleCompra(insumo, cantidad, precio_compra))
+            else:
+                self._detalles.append(DetalleCompra(producto, cantidad, precio_compra))
 
     # Getters
     @property
@@ -51,6 +58,7 @@ class Compra:
     def registrar_compra(self, caja, inventario):
         """
         Registra la compra: descuenta el dinero de la caja, paga al proveedor y agrega productos al inventario.
+        Solo agrega al inventario los productos que no son insumos (producto no es None).
         """
         total_compra = self.total
         if caja._dinero < total_compra:
@@ -59,12 +67,14 @@ class Compra:
         self._proveedor.recibir_pago(total_compra)
         for detalle in self._detalles:
             producto = detalle.producto
-            prod_existente = inventario.buscar_producto(producto._id)
-            if prod_existente:
-                prod_existente._stock += detalle._cantidad
-            else:
-                producto._stock = detalle._cantidad
-                inventario.agregar_producto(producto)
+            # Solo agregar al inventario si el producto no es un insumo genérico
+            if hasattr(producto, "_id"):
+                prod_existente = inventario.buscar_producto(producto._id)
+                if prod_existente:
+                    prod_existente._stock += detalle._cantidad
+                else:
+                    producto._stock = detalle._cantidad
+                    inventario.agregar_producto(producto)
         print(f"Compra registrada y pagada a {self._proveedor._nombre} por S/{total_compra:.2f}")
 
     def __str__(self):
@@ -72,4 +82,4 @@ class Compra:
         Representación en texto de la compra.
         """
         detalles_str = "\n".join(str(det) for det in self._detalles)
-        return f"Proveedor: {self._proveedor._nombre}\nFecha: {self._fecha}\nDetalles:\n{detalles_str}\nTotal: S/{self.total:.2f}"
+        return f"ID Compra: {self._id}\nProveedor: {self._proveedor._nombre}\nFecha: {self._fecha}\nDetalles:\n{detalles_str}\nTotal: S/{self.total:.2f}"

@@ -5,7 +5,7 @@ class Producto:
     """
     _id_counter = 1  # Variable de clase para autoincremento de IDs
 
-    def __init__(self, nombre, precio, stock, categoria = None):
+    def __init__(self, nombre, precio, stock, categoria = None, stock_minimo = 1):
         """
         Inicializa un producto con nombre, precio, stock, stock mínimo y categoría.
         """
@@ -15,6 +15,8 @@ class Producto:
         self._precio = precio
         self._stock = stock
         self._categoria = categoria
+        self._categoria = categoria
+        self._stock_minimo = stock_minimo
 
     # Getters y Setters
     @property
@@ -65,6 +67,14 @@ class Producto:
     def categoria(self, nueva_categoria):
         """Permite cambiar la categoría del producto."""
         self._categoria = nueva_categoria
+        
+    @property
+    def stock_minimo(self):
+        return self._stock_minimo
+
+    @stock_minimo.setter
+    def stock_minimo(self, valor):
+        self._stock_minimo = valor
 
     # Metodos
     def actualizar_stock(self, cantidad):
