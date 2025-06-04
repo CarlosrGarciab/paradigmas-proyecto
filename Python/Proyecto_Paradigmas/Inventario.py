@@ -12,15 +12,21 @@ class Inventario:
     def agregar_producto(self, p):
         """
         Agrega un producto al inventario.
-        Si el producto ya existe, suma el stock.
+        Si el producto ya existe (por nombre), suma el stock.
         """
         if not isinstance(p, Producto):
             raise TypeError("El objeto debe ser una instancia de la clase Producto.")
-        if p._id in self._productos:
-            existente = self._productos[p._id]
-            existente._stock += p._stock
-        else:
-            self._productos[p._id] = p
+        # Buscar producto existente por nombre (ignorando mayúsculas/minúsculas)
+        for existente in self._productos.values():
+            if existente._nombre.lower() == p._nombre.lower():
+                existente._stock += p._stock
+                # Opcional: actualizar precio, categoría o stock_minimo si quieres
+                existente._precio = p._precio  # Si quieres actualizar el precio al último ingresado
+                existente._categoria = p._categoria
+                existente._stock_minimo = p._stock_minimo
+                return
+        # Si no existe, agregar como nuevo
+        self._productos[p._id] = p
 
     def eliminar_producto(self, id):
         """

@@ -22,12 +22,6 @@ class Menu:
 
     def mostrar(self):
         while True:
-            bajo_stock = self._inventario.productos_bajo_stock()
-            if bajo_stock:
-                print("\nALERTA: Productos con bajo stock")
-                for p in bajo_stock:
-                    print(f"- {p._nombre} (Stock: {p._stock}, Mínimo: {p._stock_minimo})")
-                    input("Precione Enter para continuar...")
             print("\n=== MENU PRINCIPAL ===")
             print("1. Registrar venta")
             print("2. Registrar compra")
@@ -61,7 +55,8 @@ class Menu:
                 self.ver_compras()
                 input("Presione Enter para continuar...")
             elif opcion == "0":
-                print("Cerrando el programa...")
+                self.alerta_bajo_stock()
+                input("Cerrando Sistema...")
                 break
             else:
                 print("Opción no válida. Intente de nuevo.")
@@ -333,29 +328,60 @@ class Menu:
             if nombre_producto == "0":
                 break
             try:
-                disponible_venta = input_sn("¿El producto estará disponible para la venta?")
-                while True:
-                    precio_compra = float(input("Precio unitario de compra: "))
-                    if precio_compra > 0:
+                # Buscar producto existente por nombre (ignorando mayúsculas/minúsculas)
+                producto_existente = None
+                for prod in self._inventario.listar_productos():
+                    if prod._nombre.lower() == nombre_producto.lower():
+                        producto_existente = prod
                         break
-                    print("El precio de compra debe ser mayor a 0.")
-                while True:
+
+                if producto_existente:
+                    print(f"\nProducto '{producto_existente._nombre}' ya registrado en inventario.")
+                    print(f"Precio de compra anterior: S/{producto_existente._precio:.2f}")
+                    actualizar_precio_compra = input_sn("¿Desea actualizar el precio de compra?")
+                    if actualizar_precio_compra:
+                        precio_compra = float(input("Nuevo precio unitario de compra: "))
+                    else:
+                        precio_compra = producto_existente._precio
+
                     cantidad = int(input("Cantidad a comprar: "))
-                    if cantidad > 0:
-                        break
-                    print("La cantidad debe ser mayor a 0.")
-                if disponible_venta:
-                    while True:
-                        precio_venta = float(input("Precio de venta al público: "))
-                        if precio_venta > 0:
-                            break
-                        print("El precio de venta debe ser mayor a 0.")
-                    categoria = input("Categoría del producto: ")
-                    producto = Producto(nombre_producto, precio_venta, cantidad, categoria)
+
+                    # Solo sumamos stock, no cambiamos nada más
+                    producto = Producto(
+                        producto_existente._nombre,
+                        producto_existente._precio,
+                        cantidad,
+                        producto_existente._categoria,
+                        producto_existente._stock_minimo
+                    )
                     self._inventario.agregar_producto(producto)
-                    productos_comprados[nombre_producto] = (producto, cantidad, precio_compra, disponible_venta)
+                    productos_comprados[nombre_producto] = (producto, cantidad, precio_compra, True)
                 else:
-                    productos_comprados[nombre_producto] = (None, cantidad, precio_compra, disponible_venta)
+                    disponible_venta = input_sn("¿El producto estará disponible para la venta?")
+                    while True:
+                        precio_compra = float(input("Precio unitario de compra: "))
+                        if precio_compra > 0:
+                            break
+                        print("El precio de compra debe ser mayor a 0.")
+                    while True:
+                        cantidad = int(input("Cantidad a comprar: "))
+                        if cantidad > 0:
+                            break
+                        print("La cantidad debe ser mayor a 0.")
+                    if disponible_venta:
+                        while True:
+                            precio_venta = float(input("Precio de venta al público: "))
+                            if precio_venta > 0:
+                                break
+                            print("El precio de venta debe ser mayor a 0.")
+                        categoria = input("Categoría del producto: ")
+                        stock_minimo = int(input("Stock mínimo para alerta: "))
+                        producto = Producto(nombre_producto, precio_venta, cantidad, categoria, stock_minimo)
+                        self._inventario.agregar_producto(producto)
+                        productos_comprados[nombre_producto] = (producto, cantidad, precio_compra, disponible_venta)
+                    else:
+                        # No se crea ni agrega producto al inventario, solo se registra la compra
+                        productos_comprados[nombre_producto] = (None, cantidad, precio_compra, disponible_venta)
             except ValueError:
                 print("Entrada inválida.")
         if not productos_comprados:
@@ -370,8 +396,8 @@ class Menu:
         proveedor.recibir_pago(total_compra)
         compra = Compra(proveedor, fecha, productos_comprados)
         self._compras.append(compra)
-        print(f"Compra registrada y pagada a {proveedor._nombre} por S/{total_compra:.2f}")
-
+        print(f"Compra registrada y pagada a {proveedor._nombre} por S/{total_compra:.2f}")    
+        
     # Método para registrar clientes                
     def registrar_cliente(self):
         """
@@ -484,12 +510,49 @@ class Menu:
     def agregar_producto(self):
         print("\n=== Agregar Producto para la Venta ===")
         nombre = input("Nombre del producto: ")
-        precio = float(input("Precio de venta: "))
-        stock = int(input("Stock inicial: "))
-        categoria = input("Categoría: ")
-        producto = Producto(nombre, precio, stock, categoria)
-        self._inventario.agregar_producto(producto)
-        print("Producto agregado al inventario.")
+        # Buscar producto existente por nombre (ignorando mayúsculas/minúsculas)
+        producto_existente = None
+        for prod in self._inventario.listar_productos():
+            if prod._nombre.lower() == nombre.lower():
+                producto_existente = prod
+                break
+
+        if producto_existente:
+            print(f"\nProducto '{producto_existente._nombre}' ya registrado en inventario.")
+            print(f"Precio actual: S/{producto_existente._precio:.2f}")
+            actualizar_precio = input_sn("¿Desea actualizar el precio de venta?")
+            if actualizar_precio:
+                precio = float(input("Nuevo precio de venta: "))
+            else:
+                precio = producto_existente._precio
+
+            print(f"Categoría actual: {producto_existente._categoria}")
+            actualizar_categoria = input_sn("¿Desea actualizar la categoría?")
+            if actualizar_categoria:
+                categoria = input("Nueva categoría: ")
+            else:
+                categoria = producto_existente._categoria
+
+            print(f"Stock mínimo actual: {producto_existente._stock_minimo}")
+            actualizar_stock_minimo = input_sn("¿Desea actualizar el stock mínimo?")
+            if actualizar_stock_minimo:
+                stock_minimo = int(input("Nuevo stock mínimo para alerta: "))
+            else:
+                stock_minimo = producto_existente._stock_minimo
+
+            stock = int(input("Cantidad a agregar al stock: "))
+            # Creamos un producto temporal solo para pasar a agregar_producto (sumará stock)
+            producto = Producto(producto_existente._nombre, precio, stock, categoria, stock_minimo)
+            self._inventario.agregar_producto(producto)
+            print("Stock sumado al producto existente.")
+        else:
+            precio = float(input("Precio de venta: "))
+            stock = int(input("Stock inicial: "))
+            categoria = input("Categoría: ")
+            stock_minimo = int(input("Stock mínimo para alerta: "))
+            producto = Producto(nombre, precio, stock, categoria, stock_minimo)
+            self._inventario.agregar_producto(producto)
+            print("Producto agregado al inventario.")
 
     # --- NUEVAS FUNCIONES DE EDICIÓN Y ELIMINACIÓN ---
 
@@ -613,3 +676,11 @@ class Menu:
             print(compra)
             total += compra.total
         print(f"Total comprado: S/{total:.2f}")
+        
+    def alerta_bajo_stock(self):
+        bajo_stock = self._inventario.productos_bajo_stock()
+        if bajo_stock:
+            print("\nALERTA: Productos con bajo stock")
+            for p in bajo_stock:
+                print(f"- {p._nombre} (Stock: {p._stock}, Mínimo: {p._stock_minimo})")
+            input("Presione Enter para continuar...")
