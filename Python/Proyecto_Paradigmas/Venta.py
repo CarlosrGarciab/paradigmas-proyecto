@@ -89,7 +89,7 @@ class Venta:
         Procesa la venta:
         - Calcula el total y valida el stock.
         - Procesa el pago usando el método de pago seleccionado.
-        - Actualiza el inventario y elimina productos sin stock.
+        - Actualiza el inventario (solo descuenta stock, no elimina productos).
         - Ingresa el dinero en la caja o banco según corresponda.
         Devuelve True si la venta fue exitosa, False si hubo algún error.
         """
@@ -100,13 +100,12 @@ class Venta:
                 print("El pago fue rechazado.")
                 return False
 
-            # Actualizar el inventario
+            # Actualizar el inventario (solo descuenta stock)
             for detalle in self._detalles:
                 producto = detalle._producto
                 producto._stock -= detalle._cantidad
-                if producto._stock == 0:
-                    self._inventario.eliminar_producto(producto._id)
-                    
+                # No eliminar el producto aunque el stock llegue a 0
+
             # Registrar el ingreso de dinero en la caja o banco
             if isinstance(self._metodo_pago, PagoEfectivo):
                 self._caja.ingresar_dinero(self._total)

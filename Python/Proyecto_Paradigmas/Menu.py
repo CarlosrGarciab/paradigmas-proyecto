@@ -56,7 +56,7 @@ class Menu:
                 input("Presione Enter para continuar...")
             elif opcion == "0":
                 self.alerta_bajo_stock()
-                input("Cerrando Sistema...")
+                input("Presione Enter para salir...")
                 break
             else:
                 print("Opción no válida. Intente de nuevo.")
@@ -520,29 +520,17 @@ class Menu:
         if producto_existente:
             print(f"\nProducto '{producto_existente._nombre}' ya registrado en inventario.")
             print(f"Precio actual: S/{producto_existente._precio:.2f}")
-            actualizar_precio = input_sn("¿Desea actualizar el precio de venta?")
-            if actualizar_precio:
-                precio = float(input("Nuevo precio de venta: "))
-            else:
-                precio = producto_existente._precio
-
             print(f"Categoría actual: {producto_existente._categoria}")
-            actualizar_categoria = input_sn("¿Desea actualizar la categoría?")
-            if actualizar_categoria:
-                categoria = input("Nueva categoría: ")
-            else:
-                categoria = producto_existente._categoria
-
             print(f"Stock mínimo actual: {producto_existente._stock_minimo}")
-            actualizar_stock_minimo = input_sn("¿Desea actualizar el stock mínimo?")
-            if actualizar_stock_minimo:
-                stock_minimo = int(input("Nuevo stock mínimo para alerta: "))
-            else:
-                stock_minimo = producto_existente._stock_minimo
-
             stock = int(input("Cantidad a agregar al stock: "))
-            # Creamos un producto temporal solo para pasar a agregar_producto (sumará stock)
-            producto = Producto(producto_existente._nombre, precio, stock, categoria, stock_minimo)
+            # Solo sumamos stock, no cambiamos nada más
+            producto = Producto(
+                producto_existente._nombre,
+                producto_existente._precio,
+                stock,
+                producto_existente._categoria,
+                producto_existente._stock_minimo
+            )
             self._inventario.agregar_producto(producto)
             print("Stock sumado al producto existente.")
         else:
@@ -554,8 +542,7 @@ class Menu:
             self._inventario.agregar_producto(producto)
             print("Producto agregado al inventario.")
 
-    # --- NUEVAS FUNCIONES DE EDICIÓN Y ELIMINACIÓN ---
-
+    # Métodos para editar y eliminar clientes, productos y proveedores
     def editar_cliente(self):
         print("\n=== Editar Cliente ===")
         if not self._clientes:
