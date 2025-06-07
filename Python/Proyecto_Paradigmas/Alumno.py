@@ -15,9 +15,9 @@ class Alumno(Cliente):
 
         # Registrar el dinero en la caja o el banco según el método de pago
         if metodo_pago == "caja" and caja:
-            caja._dinero += saldo_cuenta_prepaga
+            caja.dinero += saldo_cuenta_prepaga
         elif metodo_pago == "banco" and banco:
-            banco._saldo += saldo_cuenta_prepaga
+            banco.saldo += saldo_cuenta_prepaga
         else:
             raise ValueError("Método de pago inválido o recursos no proporcionados.")
 
@@ -41,14 +41,13 @@ class Alumno(Cliente):
         if monto <= 0:
             raise ValueError("El monto de recarga debe ser positivo.")
         if caja:
-            caja._dinero += monto
+            caja.dinero += monto
         elif banco:
-            banco._saldo += monto
+            banco.saldo += monto
         else:
             raise ValueError("Debe especificar si el dinero proviene de la caja o del banco.")
         self._saldo_prepago += monto
-        print(f"Saldo recargado: S/{monto:.2f}. Saldo actual: S/{self._saldo_prepago:.2f}")
-
+        
     def __str__(self):
         """
         Representación en texto del alumno.

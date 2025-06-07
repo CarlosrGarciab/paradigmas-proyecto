@@ -2,24 +2,17 @@ from Pago import Pago
 
 class PagoPrepago(Pago):
     """
-    Representa un pago realizado usando el saldo prepago de un cliente.
+    Representa un pago realizado con saldo prepago de un alumno.
     """
-    def __init__(self, cliente, monto):
-        """
-        Inicializa el pago prepago con el cliente y el monto.
-        """
+    def __init__(self, alumno, monto):
         super().__init__(monto)
-        self._cliente = cliente
+        self._alumno = alumno
 
-    # Metodos
     def procesar_pago(self, monto):
         """
-        Procesa el pago prepago, descontando el monto del saldo prepago del cliente.
+        Procesa el pago con saldo prepago, descontando el monto del saldo del alumno.
         """
-        if self._cliente._saldo_prepago >= monto:
-            self._cliente._saldo_prepago -= monto
-            print(f"Pago prepago procesado: S/{monto:.2f} descontado del saldo prepago de {self._cliente._nombre}.")
-            return True
-        else:
-            print("Saldo prepago insuficiente.")
-            return False
+        if self._alumno.saldo_prepago < monto:
+            raise ValueError("Saldo prepago insuficiente.")
+        self._alumno.saldo_prepago -= monto
+        return True

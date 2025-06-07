@@ -14,8 +14,7 @@ class PagoTransferencia(Pago):
     # Metodos
     def procesar_pago(self, monto):
         """
-        Procesa el pago por transferencia, sumando el monto al banco.
+        Procesa el pago por transferencia, sumando el monto al banco usando la propiedad saldo.
         """
-        self._banco._saldo += monto
-        print(f"Pago por transferencia procesado: S/{monto:.2f} agregado al banco.")
+        self._banco.saldo += monto
         return True

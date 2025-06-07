@@ -61,7 +61,7 @@ class Cliente(ABC):
         if monto <= 0:
             raise ValueError("El monto de la deuda debe ser positivo.")
         self._deuda += monto
-        print(f"Deuda adquirida: S/{monto:.2f}. Deuda actual: S/{self._deuda:.2f}")
+        # Mensaje eliminado
 
     def pagar_deuda(self, monto):
         """
@@ -72,8 +72,7 @@ class Cliente(ABC):
         if monto > self._deuda:
             raise ValueError("El monto a pagar no puede ser mayor que la deuda actual.")
         self._deuda -= monto
-        print(f"Deuda pagada: S/{monto:.2f}. Deuda restante: S/{self._deuda:.2f}")
-
+        
     def __str__(self):
         """
         Representación en texto del cliente.
