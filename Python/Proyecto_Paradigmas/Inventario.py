@@ -18,10 +18,10 @@ class Inventario:
         existente = self.buscar_producto_por_nombre(p.nombre)
         if existente:
             existente.agregar_stock(p.stock)
-            # Opcional: actualizar precio, categoría o stock_minimo si quieres
             existente.precio = p.precio
             existente.categoria = p.categoria
             existente.stock_minimo = p.stock_minimo
+            existente.disponible = getattr(p, 'disponible', True)
         else:
             self._productos[p.nombre.lower()] = p
 

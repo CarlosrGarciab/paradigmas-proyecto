@@ -1,69 +1,14 @@
+from datetime import datetime
 from Producto import Producto
 from Venta import Venta
 from Compra import Compra
 from Proveedor import Proveedor
-
-class MenuClientes:
-    def __init__(self, menu):
-        self.menu = menu
-
-    def mostrar(self):
-        while True:
-            print("\n=== MENU DE CLIENTES ===")
-            print("1. Registrar cliente")
-            print("2. Ver clientes")
-            print("3. Recargar cuenta prepaga")
-            print("4. Pagar deuda")
-            print("5. Editar cliente")
-            print("6. Eliminar cliente")
-            print("0. Volver al menú principal")
-            opcion = input("Seleccione una opción: ")
-
-            if opcion == "1":
-                self.menu.registrar_cliente()
-            elif opcion == "2":
-                print("\n=== Clientes ===")
-                self.menu._mostrar_lista(self.menu._clientes)
-            elif opcion == "3":
-                self.menu.recargar_prepago_cliente()
-            elif opcion == "4":
-                self.menu.pagar_deuda_cliente()
-            elif opcion == "5":
-                self.menu.editar_cliente()
-            elif opcion == "6":
-                self.menu.eliminar_cliente()
-            elif opcion == "0":
-                break
-            else:
-                print("Opción no válida. Intente de nuevo.")
-            self.menu.pausar()
-
-class MenuProductos:
-    def __init__(self, menu):
-        self.menu = menu
-
-    def mostrar(self):
-        while True:
-            print("\n=== MENÚ DE PRODUCTOS ===")
-            print("1. Ver inventario")
-            print("2. Agregar producto")
-            print("3. Editar producto")
-            print("4. Eliminar producto")
-            print("0. Volver")
-            opcion = input("Seleccione una opción: ")
-            if opcion == "1":
-                print(self.menu._inventario)
-            elif opcion == "2":
-                self.menu.agregar_producto()
-            elif opcion == "3":
-                self.menu.editar_producto()
-            elif opcion == "4":
-                self.menu.eliminar_producto()
-            elif opcion == "0":
-                break
-            else:
-                print("Opción no válida.")
-            self.menu.pausar()
+from PagoEfectivo import PagoEfectivo
+from PagoPrepago import PagoPrepago
+from PagoTransferencia import PagoTransferencia
+from PagoDeuda import PagoDeuda
+from Alumno import Alumno
+from Profesor import Profesor
 
 class Menu:
     """
@@ -82,11 +27,12 @@ class Menu:
         self._proveedores = proveedores
         self._ventas = ventas
         self._compras = compras
-        self.menu_clientes = MenuClientes(self)
-        self.menu_productos = MenuProductos(self)
 
-    # Funciones auxiliares para validación de entradas
+    # Métodos de validación y utilidades
     def pedir_float(self, mensaje, minimo=None, maximo=None, permitir_vacio=False):
+        """
+        Solicita un número flotante al usuario con validaciones opcionales de mínimo, máximo y vacío.
+        """
         while True:
             valor = input(mensaje)
             if permitir_vacio and valor.strip() == "":
@@ -104,6 +50,9 @@ class Menu:
                 print("Debe ingresar un número válido.")
 
     def pedir_int(self, mensaje, minimo=None, maximo=None, permitir_vacio=False):
+        """
+        Solicita un número entero al usuario con validaciones opcionales de mínimo, máximo y vacío.
+        """
         while True:
             valor = input(mensaje)
             if permitir_vacio and valor.strip() == "":
@@ -120,38 +69,44 @@ class Menu:
             except ValueError:
                 print("Debe ingresar un número entero válido.")
 
-    def pedir_fecha(self, mensaje):
-        while True:
-            fecha = input(mensaje)
-            if fecha.strip() == "":
-                print("La fecha no puede estar vacía.")
-                continue
-            # Aquí podrías validar formato si lo deseas
-            return fecha
-
     def pausar(self):
+        """
+        Pausa la ejecución hasta que el usuario presione Enter.
+        """
         input("Presione Enter para continuar...")
 
+    def mostrar_lista(self, lista, attr="nombre"):
+        """
+        Muestra una lista numerada de objetos por un atributo dado (por defecto 'nombre').
+        """
+        for idx, elem in enumerate(lista, 1):
+            print(f"{idx}. {getattr(elem, attr)}")
+
+    def seleccionar_elemento(self, lista, prompt="Seleccione un elemento: "):
+        """
+        Permite seleccionar un elemento de una lista por índice, con reintentos y validación.
+        """
+        while True:
+            try:
+                idx = int(input(prompt)) - 1
+                if 0 <= idx < len(lista):
+                    return lista[idx]
+                else:
+                    print("Selección inválida.")
+            except ValueError as e:
+                print(f"Debe ingresar un número válido. ({e})")
+            except Exception as e:
+                print(f"Error inesperado: {e}")
+            retry = input("¿Desea intentar de nuevo? (s/n): ").strip().lower()
+            if retry != "s":
+                break
+        return None
+
+    # Menú principal y submenús
     def mostrar(self):
         """
-        Muestra el menú principal y gestiona la navegación entre opciones.
-        Usa un diccionario para mapear opciones a funciones.
+        Muestra el menú principal y gestiona la navegación entre las opciones principales.
         """
-        def pausar():
-            self.pausar()
-
-        opciones = {
-            "1": lambda: (self.registrar_venta(), self.alerta_bajo_stock(), pausar()),
-            "2": lambda: (self.registrar_compra(), self.alerta_bajo_stock(), pausar()),
-            "3": self.menu_productos.mostrar,
-            "4": self.menu_caja_banco,
-            "5": self.menu_proveedores,
-            "6": self.menu_clientes.mostrar,
-            "7": lambda: (self.ver_ventas(), pausar()),
-            "8": lambda: (self.ver_compras(), pausar()),
-            "0": self.salir
-        }
-
         while True:
             print("\n=== MENU PRINCIPAL ===")
             print("1. Registrar venta")
@@ -164,42 +119,102 @@ class Menu:
             print("8. Compras")
             print("0. Salir")
             opcion = input("Seleccione una opción: ")
-            accion = opciones.get(opcion)
-            if accion:
-                accion()
+            if opcion == "1":
+                self.registrar_venta()
+                self.alerta_bajo_stock()
+                self.pausar()
+            elif opcion == "2":
+                self.registrar_compra()
+                self.alerta_bajo_stock()
+                self.pausar()
+            elif opcion == "3":
+                self.menu_productos()
+            elif opcion == "4":
+                self.menu_caja_banco()
+            elif opcion == "5":
+                self.mostrar_proveedores()
+                self.pausar()
+            elif opcion == "6":
+                self.menu_clientes()
+            elif opcion == "7":
+                self.ver_ventas()
+                self.pausar()
+            elif opcion == "8":
+                self.ver_compras()
+                self.pausar()
+            elif opcion == "0":
+                self.alerta_bajo_stock()
+                print("\nSaliendo del sistema...")
+                break
             else:
                 print("Opción no válida. Intente de nuevo.")
 
-    def salir(self):
-        self.alerta_bajo_stock()
-        print("Saliendo del sistema...")
-        exit()
+    def menu_productos(self):
+        """
+        Submenú para gestionar productos: ver, agregar, editar y eliminar.
+        """
+        while True:
+            print("\n=== MENÚ DE PRODUCTOS ===")
+            print("1. Ver inventario")
+            print("2. Agregar producto")
+            print("3. Editar producto")
+            print("4. Eliminar producto")
+            print("0. Volver")
+            opcion = input("Seleccione una opción: ")
+            if opcion == "1":
+                print(self._inventario)
+                self.pausar()
+            elif opcion == "2":
+                self.agregar_producto()
+                self.pausar()
+            elif opcion == "3":
+                self.editar_producto()
+                self.pausar()
+            elif opcion == "4":
+                self.eliminar_producto()
+                self.pausar()
+            elif opcion == "0":
+                break
+            else:
+                print("Opción no válida.")
 
-    def ver_ventas(self):
+    def menu_clientes(self):
         """
-        Muestra el historial de ventas y el total vendido.
+        Submenú para gestionar clientes: registrar, ver, recargar, pagar deuda, editar y eliminar.
         """
-        print("\n=== HISTORIAL DE VENTAS Y TOTAL ===")
-        total = 0
-        for venta in self._ventas:
-            print(venta)
-            print()
-            total += venta.total
-        print(f"Total vendido: S/{total:.2f}")
-        self.pausar()
-
-    def ver_compras(self):
-        """
-        Muestra el historial de compras y el total comprado.
-        """
-        print("\n=== HISTORIAL DE COMPRAS Y TOTAL ===")
-        total = 0
-        for compra in self._compras:
-            print(compra)
-            print()
-            total += compra.total
-        print(f"Total comprado: S/{total:.2f}")
-        self.pausar()
+        while True:
+            print("\n=== MENU DE CLIENTES ===")
+            print("1. Registrar cliente")
+            print("2. Ver clientes")
+            print("3. Recargar cuenta prepaga")
+            print("4. Pagar deuda")
+            print("5. Editar cliente")
+            print("6. Eliminar cliente")
+            print("0. Volver al menú principal")
+            opcion = input("Seleccione una opción: ")
+            if opcion == "1":
+                self.registrar_cliente()
+                self.pausar()
+            elif opcion == "2":
+                print("\n=== Clientes ===")
+                self.mostrar_lista(self._clientes)
+                self.pausar()
+            elif opcion == "3":
+                self.recargar_prepago_cliente()
+                self.pausar()
+            elif opcion == "4":
+                self.pagar_deuda_cliente()
+                self.pausar()
+            elif opcion == "5":
+                self.editar_cliente()
+                self.pausar()
+            elif opcion == "6":
+                self.eliminar_cliente()
+                self.pausar()
+            elif opcion == "0":
+                break
+            else:
+                print("Opción no válida. Intente de nuevo.")
 
     def menu_caja_banco(self):
         """
@@ -238,39 +253,10 @@ class Menu:
             else:
                 print("Opción no válida.")
 
-    def _mostrar_lista(self, lista, attr="nombre"):
-        """
-        Muestra una lista de objetos por un atributo dado.
-        """
-        for idx, elem in enumerate(lista, 1):
-            print(f"{idx}. {getattr(elem, attr)}")
-
-    def _seleccionar_elemento(self, lista, prompt="Seleccione un elemento: "):
-        """
-        Permite seleccionar un elemento de una lista por índice.
-        Devuelve el elemento seleccionado o None si la selección es inválida.
-        Permite reintentar en caso de error.
-        """
-        while True:
-            try:
-                idx = int(input(prompt)) - 1
-                if 0 <= idx < len(lista):
-                    return lista[idx]
-                else:
-                    print("Selección inválida.")
-            except ValueError as e:
-                print(f"Debe ingresar un número válido. ({e})")
-            except Exception as e:
-                print(f"Error inesperado: {e}")
-            retry = input("¿Desea intentar de nuevo? (s/n): ").strip().lower()
-            if retry != "s":
-                break
-        return None
-
+    # Gestión de productos
     def agregar_producto(self):
         """
-        Permite agregar un nuevo producto o sumar stock a uno existente.
-        Valida todos los datos ingresados.
+        Permite agregar un nuevo producto o sumar stock a uno existente. Valida todos los datos ingresados.
         """
         print("\n=== Agregar Producto para la Venta ===")
         nombre = input("Nombre del producto: ").strip()
@@ -308,16 +294,15 @@ class Menu:
 
     def editar_producto(self):
         """
-        Permite editar los datos de un producto existente.
-        Valida todos los datos ingresados.
+        Permite editar los datos de un producto existente. Valida todos los datos ingresados.
         """
         print("\n=== Editar Producto ===")
         productos = self._inventario.listar_productos()
         if not productos:
             print("No hay productos en el inventario.")
             return
-        self._mostrar_lista(productos)
-        producto = self._seleccionar_elemento(productos, "Seleccione el número del producto a editar: ")
+        self.mostrar_lista(productos)
+        producto = self.seleccionar_elemento(productos, "Seleccione el número del producto a editar: ")
         if not producto:
             return
         nuevo_nombre = input(f"Nuevo nombre (actual: {producto.nombre}): ").strip() or producto.nombre
@@ -349,17 +334,17 @@ class Menu:
         if not productos:
             print("No hay productos en el inventario.")
             return
-        self._mostrar_lista(productos)
-        producto = self._seleccionar_elemento(productos, "Seleccione el número del producto a eliminar: ")
+        self.mostrar_lista(productos)
+        producto = self.seleccionar_elemento(productos, "Seleccione el número del producto a eliminar: ")
         if not producto:
             return
         self._inventario.eliminar_producto(producto.nombre)
         print("Producto eliminado correctamente.")
 
+    # Gestión de ventas y compras
     def registrar_venta(self):
         """
-        Permite registrar una venta, seleccionando productos y método de pago.
-        Solo recopila datos y delega la lógica a la clase Venta.
+        Permite registrar una venta, seleccionando productos y método de pago. Solo recopila datos y delega la lógica a la clase Venta.
         """
         print("\n=== Registrar Venta ===")
         productos_disponibles = [p for p in self._inventario.listar_productos() if p.stock > 0]
@@ -413,11 +398,10 @@ class Menu:
         try:
             if metodo == "1":
                 monto_pago = self.pedir_float("Ingrese el monto recibido en efectivo: ", minimo=total)
-                from PagoEfectivo import PagoEfectivo
                 metodo_pago = PagoEfectivo(self._caja, monto_pago)
-                venta = Venta(productos_vendidos, metodo_pago, self._inventario, self._caja)
+                fecha = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                venta = Venta(productos_vendidos, metodo_pago, self._inventario, self._caja, fecha=fecha)
             elif metodo == "2":
-                from Alumno import Alumno
                 alumnos = [c for c in self._clientes if isinstance(c, Alumno)]
                 if not alumnos:
                     print("No hay alumnos registrados para prepago.")
@@ -430,13 +414,13 @@ class Menu:
                     print("Selección inválida.")
                     return
                 alumno = alumnos[idx_cliente-1]
-                from PagoPrepago import PagoPrepago
                 metodo_pago = PagoPrepago(alumno, total)
-                venta = Venta(productos_vendidos, metodo_pago, self._inventario, self._caja, alumno)
+                fecha = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                venta = Venta(productos_vendidos, metodo_pago, self._inventario, self._caja, alumno, fecha=fecha)
             elif metodo == "3":
-                from PagoTransferencia import PagoTransferencia
                 metodo_pago = PagoTransferencia(self._banco, total)
-                venta = Venta(productos_vendidos, metodo_pago, self._inventario, self._caja)
+                fecha = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                venta = Venta(productos_vendidos, metodo_pago, self._inventario, self._caja, fecha=fecha)
             elif metodo == "4":
                 if not self._clientes:
                     print("No hay clientes registrados para deuda.")
@@ -449,9 +433,9 @@ class Menu:
                     print("Selección inválida.")
                     return
                 cliente = self._clientes[idx_cliente-1]
-                from PagoDeuda import PagoDeuda
                 metodo_pago = PagoDeuda(cliente, total)
-                venta = Venta(productos_vendidos, metodo_pago, self._inventario, self._caja, cliente)
+                fecha = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                venta = Venta(productos_vendidos, metodo_pago, self._inventario, self._caja, cliente, fecha=fecha)
             else:
                 print("Método de pago no válido.")
                 return
@@ -467,12 +451,10 @@ class Menu:
                 print("La venta no pudo completarse. Verifique stock o saldo.")
         except Exception as e:
             print(f"Error al procesar la venta: {e}")
-        self.pausar()
 
     def registrar_compra(self):
         """
-        Permite registrar una compra a un proveedor, agregando productos al inventario.
-        Solo recopila datos y delega la lógica a la clase Compra.
+        Permite registrar una compra a un proveedor, agregando productos al inventario. Solo recopila datos y delega la lógica a la clase Compra.
         """
         def input_sn(mensaje):
             while True:
@@ -526,7 +508,7 @@ class Menu:
             print("No se ingresaron productos para la compra.")
             return
 
-        fecha = self.pedir_fecha("Ingrese la fecha de la compra (ej: 21/05/2025): ")
+        fecha = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         total_compra = sum(cantidad * precio_compra for _, (cantidad, precio_compra) in productos_comprados.items())
 
         print("¿Cómo desea pagar al proveedor?")
@@ -556,7 +538,8 @@ class Menu:
         self._compras.append(compra)
         self.pausar()
 
-    # Método para registrar clientes                
+
+    # Gestión de clientes               
     def registrar_cliente(self):
         """
         Permite registrar un nuevo cliente (alumno o profesor).
@@ -595,14 +578,12 @@ class Menu:
                 return
             caja = self._caja if metodo_pago == "1" else None
             banco = self._banco if metodo_pago == "2" else None
-            from Alumno import Alumno
             alumno = Alumno(nombre, grado, saldo_prepago, "caja" if caja else "banco", caja, banco)
             self._clientes.append(alumno)
             print("Alumno registrado con éxito.")
         # Profesor
         elif tipo == "2":
             grado = input("Donde enseña el profesor: ")
-            from Profesor import Profesor
             profesor = Profesor(nombre, grado)
             self._clientes.append(profesor)
             print("Profesor registrado con éxito.")
@@ -615,8 +596,8 @@ class Menu:
             print("No hay clientes registrados.")
             return
         print("\n=== Editar Cliente ===")
-        self._mostrar_lista(self._clientes)
-        cliente = self._seleccionar_elemento(self._clientes, "Seleccione el número del cliente a editar: ")
+        self.mostrar_lista(self._clientes)
+        cliente = self.seleccionar_elemento(self._clientes, "Seleccione el número del cliente a editar: ")
         if not cliente:
             return
         nuevo_nombre = input(f"Nuevo nombre (actual: {cliente.nombre}): ").strip()
@@ -627,15 +608,7 @@ class Menu:
             print("El nombre no puede estar vacío. No se realizaron cambios.")
 
         # Edición específica según tipo de cliente
-        # Alumno
-        try:
-            from Alumno import Alumno
-            from Profesor import Profesor
-        except ImportError:
-            Alumno = None
-            Profesor = None
-
-        if Alumno and isinstance(cliente, Alumno):
+        if isinstance(cliente, Alumno):
             nuevo_grado = input(f"Nuevo grado (actual: {cliente.grado}): ").strip()
             if nuevo_grado:
                 cliente.grado = nuevo_grado
@@ -645,7 +618,7 @@ class Menu:
             if saldo is not None:
                 cliente.saldo_prepago = saldo
                 print("Saldo prepago actualizado.")
-        elif Profesor and isinstance(cliente, Profesor):
+        elif isinstance(cliente, Profesor):
             nuevo_grado = input(f"Nuevo lugar donde enseña (actual: {cliente.grado}): ").strip()
             if nuevo_grado:
                 cliente.grado = nuevo_grado
@@ -653,40 +626,34 @@ class Menu:
 
     def eliminar_cliente(self):
         """
-        Permite eliminar un cliente del sistema.
+        Permite eliminar un cliente del sistema, solicitando confirmación.
         """
-        cliente = self.seleccionar_y_confirmar(
-            self._clientes,
-            "Seleccione el número del cliente a eliminar: ",
-            "¿Está seguro que desea eliminar este cliente?"
-        )
-        if cliente:
+        if not self._clientes:
+            print("No hay clientes registrados.")
+            return
+        print("\n=== Eliminar Cliente ===")
+        self.mostrar_lista(self._clientes)
+        cliente = self.seleccionar_elemento(self._clientes, "Seleccione el número del cliente a eliminar: ")
+        if not cliente:
+            return
+        confirm = input(f"¿Está seguro que desea eliminar a '{cliente.nombre}'? (s/n): ").strip().lower()
+        if confirm == "s":
             self._clientes.remove(cliente)
             print(f"Cliente '{cliente.nombre}' eliminado.")
+        else:
+            print("Eliminación cancelada.")
 
-    def alerta_bajo_stock(self):
-        """
-        Muestra una alerta si hay productos con stock por debajo del mínimo.
-        """
-        bajo_stock = self._inventario.productos_bajo_stock()
-        if bajo_stock:
-            print("\nALERTA: Productos con bajo stock")
-            for p in bajo_stock:
-                print(f"- {p.nombre} (Stock: {p.stock}, Mínimo: {p.stock_minimo})")
-            input("Presione Enter para continuar...")
-    
     def recargar_prepago_cliente(self):
         """
         Permite recargar la cuenta prepaga de un alumno.
         """
-        from Alumno import Alumno
         alumnos = [c for c in self._clientes if isinstance(c, Alumno)]
         if not alumnos:
             print("No hay alumnos con cuenta prepaga registrados.")
             return
         print("\n=== Recargar Cuenta Prepaga ===")
-        self._mostrar_lista(alumnos)
-        alumno = self._seleccionar_elemento(alumnos, "Seleccione el alumno a recargar: ")
+        self.mostrar_lista(alumnos)
+        alumno = self.seleccionar_elemento(alumnos, "Seleccione el alumno a recargar: ")
         if not alumno:
             return
         monto = self.pedir_float("Monto a recargar: ", minimo=0)
@@ -722,8 +689,8 @@ class Menu:
             print("No hay clientes con deuda.")
             return
         print("\n=== Pagar Deuda de Cliente ===")
-        self._mostrar_lista(clientes_con_deuda)
-        cliente = self._seleccionar_elemento(clientes_con_deuda, "Seleccione el cliente a pagar deuda: ")
+        self.mostrar_lista(clientes_con_deuda)
+        cliente = self.seleccionar_elemento(clientes_con_deuda, "Seleccione el cliente a pagar deuda: ")
         if not cliente:
             return
         print(f"Deuda actual: S/{cliente.deuda:.2f}")
@@ -745,34 +712,24 @@ class Menu:
         else:
             print("Opción de recepción no válida.")
 
-    def menu_proveedores(self):
+    # Gestión de proveedores y alertas
+    def mostrar_proveedores(self):
         """
-        Submenú para gestionar proveedores.
+        Muestra la lista de proveedores registrados con detalle.
         """
-        while True:
-            print("\n=== MENÚ DE PROVEEDORES ===")
-            print("1. Ver proveedores")
-            print("2. Registrar proveedor")
-            print("0. Volver")
-            opcion = input("Seleccione una opción: ")
-            if opcion == "1":
-                if not self._proveedores:
-                    print("No hay proveedores registrados.")
-                else:
-                    self._mostrar_lista(self._proveedores)
-                self.pausar()
-            elif opcion == "2":
-                nombre = input("Nombre del proveedor: ").strip()
-                if not nombre:
-                    print("El nombre no puede estar vacío.")
-                elif any(p.nombre == nombre for p in self._proveedores):
-                    print("Ya existe un proveedor con ese nombre.")
-                else:
-                    proveedor = Proveedor(nombre)
-                    self._proveedores.append(proveedor)
-                    print("Proveedor registrado con éxito.")
-                self.pausar()
-            elif opcion == "0":
-                break
-            else:
-                print("Opción no válida.")
+        print("\n=== PROVEEDORES REGISTRADOS ===")
+        if not self._proveedores:
+            print("No hay proveedores registrados.")
+        else:
+            for idx, proveedor in enumerate(self._proveedores, 1):
+                print(f"{idx}. {proveedor}")
+
+    def alerta_bajo_stock(self):
+        """
+        Muestra una alerta si hay productos con stock por debajo del mínimo.
+        """
+        bajo_stock = self._inventario.productos_bajo_stock()
+        if bajo_stock:
+            print("\nALERTA: Productos con bajo stock")
+            for p in bajo_stock:
+                print(f"- {p.nombre} (Stock: {p.stock}, Mínimo: {p.stock_minimo})")

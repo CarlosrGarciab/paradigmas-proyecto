@@ -2,26 +2,24 @@ class Compra:
     """
     Representa una compra realizada a un proveedor.
     """
-    _id_counter = 1
 
     def __init__(self, proveedor, fecha, productos_comprados):
         """
-        productos_comprados: diccionario {nombre_producto: (cantidad, precio_compra)}
+        productos_comprados: diccionario {nombre_producto: (cantidad, precio_compra, disponible)}
+        El tercer valor (disponible) es opcional (por compatibilidad).
         """
-        self._id = Compra._id_counter
-        Compra._id_counter += 1
-
         self._proveedor = proveedor
         self._fecha = fecha
-        # Guardar solo datos simples: nombre del producto, cantidad, precio
-        self._productos_comprados = {}  # {str: (cantidad, precio_compra)}
-        for nombre_producto, (cantidad, precio_compra) in productos_comprados.items():
-            self._productos_comprados[nombre_producto] = (cantidad, precio_compra)
+        # Guardar datos: nombre del producto, cantidad, precio, disponible (bool)
+        self._productos_comprados = {}  # {str: (cantidad, precio_compra, disponible)}
+        for nombre_producto, datos in productos_comprados.items():
+            if len(datos) == 3:
+                cantidad, precio_compra, disponible = datos
+            else:
+                cantidad, precio_compra = datos
+                disponible = True  # Por defecto, para compatibilidad
+            self._productos_comprados[nombre_producto] = (cantidad, precio_compra, disponible)
         self._total = self.calcular_total()
-
-    @property
-    def id(self):
-        return self._id
 
     @property
     def proveedor(self):
@@ -40,11 +38,15 @@ class Compra:
         return self._total
 
     def calcular_total(self):
-        return sum(cantidad * precio_compra for _, (cantidad, precio_compra) in self._productos_comprados.items())
+        return sum(cantidad * precio_compra for _, (cantidad, precio_compra, _) in self._productos_comprados.items())
 
     def __str__(self):
-        detalles = "\n".join(
-            f"{nombre} x {cantidad} = S/{precio_compra * cantidad:.2f} (Compra: S/{precio_compra:.2f})"
-            for nombre, (cantidad, precio_compra) in self._productos_comprados.items()
-        )
-        return f"ID Compra: {self._id}\nProveedor: {self._proveedor.nombre}\nFecha: {self._fecha}\nProductos comprados:\n{detalles}\nTotal: S/{self._total:.2f}"
+        detalles = []
+        for nombre, datos in self._productos_comprados.items():
+            if len(datos) == 3:
+                cantidad, precio_compra, _ = datos  # ignorar disponible
+            else:
+                cantidad, precio_compra = datos
+            linea = f"{nombre} x {cantidad} = S/{precio_compra * cantidad:.2f} (Compra: S/{precio_compra:.2f})"
+            detalles.append(linea)
+        return f"Proveedor: {self._proveedor.nombre}\nFecha: {self._fecha}\nProductos comprados:\n" + "\n".join(detalles) + f"\nTotal: S/{self._total:.2f}"

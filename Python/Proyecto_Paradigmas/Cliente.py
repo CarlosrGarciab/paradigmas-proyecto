@@ -5,24 +5,16 @@ class Cliente(ABC):
     Clase abstracta base para representar un cliente de la cantina.
     Gestiona nombre, grado y deuda.
     """
-    _id_counter = 1  # Variable para autoincremento de IDs
 
     def __init__(self, nombre, grado):
         """
-        Inicializa un cliente con su id, nombre, grado y deuda en 0.
+        Inicializa un cliente con su nombre, grado y deuda en 0.
         """
-        self._id = Cliente._id_counter
-        Cliente._id_counter += 1
         self._nombre = nombre
         self._grado = grado
         self._deuda = 0.0
 
     # Getters y Setters
-    @property
-    def id(self):
-        """ID unico del cliente."""
-        return self._id
-
     @property
     def nombre(self):
         """Nombre del cliente."""
@@ -61,7 +53,6 @@ class Cliente(ABC):
         if monto <= 0:
             raise ValueError("El monto de la deuda debe ser positivo.")
         self._deuda += monto
-        # Mensaje eliminado
 
     def pagar_deuda(self, monto):
         """

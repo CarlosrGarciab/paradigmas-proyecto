@@ -3,12 +3,13 @@ class Producto:
     Representa un producto de la cantina.
     Gestiona nombre, precio, stock y categoría.
     """
-    def __init__(self, nombre, precio, stock, categoria=None, stock_minimo=1):
+    def __init__(self, nombre, precio, stock, categoria=None, stock_minimo=1, disponible=True):
         self.nombre = nombre
         self.precio = precio
         self.stock = stock
         self.categoria = categoria
         self.stock_minimo = stock_minimo
+        self.disponible = disponible
 
     # Getters y Setters
     @property
@@ -59,6 +60,14 @@ class Producto:
             raise ValueError("El stock mínimo no puede ser negativo.")
         self._stock_minimo = valor
 
+    @property
+    def disponible(self):
+        return getattr(self, '_disponible', True)
+
+    @disponible.setter
+    def disponible(self, valor):
+        self._disponible = bool(valor)
+
     # Métodos de negocio centralizados
     def agregar_stock(self, cantidad):
         if cantidad <= 0:
@@ -72,7 +81,7 @@ class Producto:
             raise ValueError("Stock insuficiente.")
         self._stock -= cantidad
 
-    def actualizar_datos(self, nombre=None, precio=None, categoria=None, stock_minimo=None):
+    def actualizar_datos(self, nombre=None, precio=None, categoria=None, stock_minimo=None, disponible=None):
         if nombre is not None:
             self.nombre = nombre
         if precio is not None:
@@ -81,6 +90,8 @@ class Producto:
             self.categoria = categoria
         if stock_minimo is not None:
             self.stock_minimo = stock_minimo
+        if disponible is not None:
+            self.disponible = disponible
 
     def __str__(self):
-        return f"{self.nombre} - Precio: {self.precio:.2f} - Stock: {self.stock} - Categoría: {self.categoria or 'Sin categoría'}"
+        return f"{self.nombre} - Precio: {self.precio:.2f} - Stock: {self.stock} - Categoría: {self.categoria or 'Sin categoría'} - {'Disponible' if self.disponible else 'No disponible para venta'}"
