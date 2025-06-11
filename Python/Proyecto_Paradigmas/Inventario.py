@@ -54,7 +54,12 @@ class Inventario:
         return [p for p in self._productos.values() if p.stock <= p.stock_minimo]
 
     def buscar_producto_por_nombre(self, nombre):
-        """Busca un producto por nombre (ignorando mayúsculas/minúsculas)."""
+        """Busca un producto por nombre (ignorando mayúsculas/minúsculas). Acepta string o Producto."""
+        # Si nombre es un objeto Producto, extrae el nombre
+        if hasattr(nombre, 'nombre'):
+            nombre = nombre.nombre
+        if not isinstance(nombre, str):
+            return None
         for producto in self._productos.values():
             if producto.nombre.lower() == nombre.lower():
                 return producto
