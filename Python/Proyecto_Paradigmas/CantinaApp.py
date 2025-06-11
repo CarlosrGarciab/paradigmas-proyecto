@@ -1,17 +1,35 @@
 import tkinter as tk
-from tkinter import messagebox, simpledialog, ttk
-from tkinter import PhotoImage
+from tkinter import messagebox, simpledialog, ttk, PhotoImage
 from Inventario import Inventario
 from Caja import Caja
 from CuentaBanco import CuentaBanco
 from Persistencia import Persistencia
+from datetime import datetime
+
+# --- Importaciones de clases propias ---
+from PagoEfectivo import PagoEfectivo
+from PagoPrepago import PagoPrepago
+from PagoTransferencia import PagoTransferencia
+from PagoDeuda import PagoDeuda
+from Venta import Venta
+from Compra import Compra
+from Proveedor import Proveedor
+from Producto import Producto
+from Alumno import Alumno
+from Profesor import Profesor
 
 class CantinaApp:
+    """
+    Clase principal de la aplicación de Cantina. Gestiona la interfaz gráfica y la lógica de negocio para ventas, compras, productos, clientes, proveedores, caja y banco.
+    """
     def __init__(self, root):
+        """
+        Inicializa la aplicación, carga los datos persistentes y configura la ventana principal.
+        """
         self.root = root
-        self.root.title("Sistema de Cantina")
-        self.root.geometry("700x500")
+        self.root.title("Sistema Cantina")
         self.root.configure(bg="#f5f5f5")
+        self.root.state("zoomed")
         try:
             self.icon = PhotoImage(file="icono_cantina.png")
             self.root.iconphoto(False, self.icon)
@@ -104,7 +122,7 @@ class CantinaApp:
         def mostrar_productos():
             tree.delete(*tree.get_children())
             filtro = var_buscar.get().lower()
-            productos = [p for p in self.inventario.listar_productos() if getattr(p, 'disponible', True) and p.stock > 0]
+            productos = [p for p in self.inventario.listar_productos() if getattr(p, 'disponible', True)]
             if filtro:
                 productos = [p for p in productos if filtro in p.nombre.lower() or filtro in getattr(p, 'categoria', '').lower()]
             for p in productos:
@@ -115,10 +133,7 @@ class CantinaApp:
 
     def eliminar_elemento(self, lista, tipo, atributo="nombre", callback_post=None):
         """
-        Elimina un elemento de una lista (productos, clientes, proveedores) usando el buscador genérico.
-        tipo: string para mostrar ("producto", "cliente", "proveedor")
-        atributo: atributo a mostrar/buscar (por defecto "nombre")
-        callback_post: función a ejecutar después de eliminar (opcional)
+        Elimina un elemento de una lista (producto, cliente o proveedor) tras confirmación del usuario.
         """
         if not lista:
             messagebox.showinfo(f"Eliminar {tipo.title()}", f"No hay {tipo}s registrados.")
@@ -128,7 +143,13 @@ class CantinaApp:
             win_busqueda.destroy()
             confirm = messagebox.askyesno("Confirmar", f"¿Está seguro que desea eliminar '{getattr(elem, atributo, str(elem))}'?")
             if confirm:
-                lista.remove(elem)
+                if tipo == "producto":
+                    # Elimina por nombre, no por objeto
+                    self.inventario.eliminar_producto(elem.nombre)
+                elif tipo == "cliente":
+                    self.clientes.remove(elem)
+                elif tipo == "proveedor":
+                    self.proveedores.remove(elem)
                 messagebox.showinfo("Éxito", f"{tipo.title()} eliminado correctamente.")
                 if callback_post:
                     callback_post()
@@ -238,15 +259,6 @@ class CantinaApp:
         """
         Abre una ventana para registrar una venta: selección de productos, cantidades, método de pago y cliente si corresponde.
         """
-        import tkinter as tk
-        from tkinter import ttk, messagebox, simpledialog
-        from datetime import datetime
-        from PagoEfectivo import PagoEfectivo
-        from PagoPrepago import PagoPrepago
-        from PagoTransferencia import PagoTransferencia
-        from PagoDeuda import PagoDeuda
-        from Venta import Venta
-
         productos_disponibles = [p for p in self.inventario.listar_productos() if getattr(p, 'disponible', True) and p.stock > 0]
         if not productos_disponibles:
             messagebox.showinfo("Registrar Venta", "No hay productos con stock disponible para vender.")
@@ -254,7 +266,7 @@ class CantinaApp:
 
         win = tk.Toplevel(self.root)
         win.title("Registrar Venta")
-        win.geometry("750x600")
+        self.posicionar_ventana_arriba(win, 900, 650)
         win.resizable(False, False)
 
         style = ttk.Style()
@@ -435,12 +447,14 @@ class CantinaApp:
                 # Actualizar stock
                 for nombre, cant in productos_vendidos.items():
                     prod = self.inventario.buscar_producto_por_nombre(nombre)
+                    if cant > prod.stock:
+                        messagebox.showerror("Error", f"No hay suficiente stock de {prod.nombre}.")
+                        return
                     prod.stock -= cant
                 # Registrar venta
                 venta = Venta(productos_vendidos, metodo_pago, self.inventario, self.caja, fecha=fecha)
                 venta.calcular_total()
                 self.ventas.append(venta)
-                messagebox.showinfo("Éxito", "Venta registrada correctamente.")
                 Persistencia.guardar(self.ventas, "ventas.pkl")
                 Persistencia.guardar(self.inventario, "inventario.pkl")
                 Persistencia.guardar(self.caja, "caja.pkl")
@@ -457,16 +471,9 @@ class CantinaApp:
         Abre una ventana para registrar una compra: seleccionar proveedor, productos, cantidades, precios y método de pago.
         Solo muestra productos asociados al proveedor seleccionado.
         """
-        import tkinter as tk
-        from tkinter import ttk, messagebox
-        from datetime import datetime
-        from Compra import Compra
-        from Proveedor import Proveedor
-        from Producto import Producto
-
         win = tk.Toplevel(self.root)
         win.title("Registrar Compra")
-        win.geometry("750x700")
+        self.posicionar_ventana_arriba(win, 950, 600)
         win.resizable(False, False)
 
         style = ttk.Style()
@@ -482,7 +489,7 @@ class CantinaApp:
 
         def seleccionar_proveedor():
             if not self.proveedores:
-                messagebox.showinfo("Proveedores", "No hay proveedores registrados.")
+                ("Proveedores", "No hay proveedores registrados.")
                 return
             def on_select(prov, win_busq):
                 win_busq.destroy()
@@ -561,8 +568,22 @@ class CantinaApp:
         entry_nuevo_stock_min = ttk.Entry(frame_nuevo, width=6)
         entry_nuevo_stock_min.pack(side="left", padx=2)
         var_nuevo_disponible = tk.BooleanVar(value=True)
-        ttk.Checkbutton(frame_nuevo, text="Disponible", variable=var_nuevo_disponible).pack(side="left", padx=5)
+        chk_nuevo_disponible = ttk.Checkbutton(frame_nuevo, text="Disponible", variable=var_nuevo_disponible)
+        chk_nuevo_disponible.pack(side="left", padx=5)
         ttk.Label(frame_nuevo, text="(nombre, cant, $compra, $venta, cat, min)").pack(side="left", padx=5)
+
+        # --- Ocultar campos de venta si no es disponible ---
+        def actualizar_campos_nuevo_producto(*args):
+            if var_nuevo_disponible.get():
+                entry_nuevo_precio_venta.config(state="normal")
+                entry_nuevo_stock_min.config(state="normal")
+            else:
+                entry_nuevo_precio_venta.delete(0, tk.END)
+                entry_nuevo_stock_min.delete(0, tk.END)
+                entry_nuevo_precio_venta.config(state="disabled")
+                entry_nuevo_stock_min.config(state="disabled")
+        var_nuevo_disponible.trace('w', lambda *a: actualizar_campos_nuevo_producto())
+        actualizar_campos_nuevo_producto()
 
         # --- Método de pago ---
         frame_pago = ttk.LabelFrame(win, text="Método de pago", padding=10)
@@ -594,12 +615,14 @@ class CantinaApp:
                     precio = var_precio.get()
                     disponible = var_disponible.get() if hasattr(var_disponible, 'get') else True
                     if cant > 0:
-                        producto_sumar = Producto(p.nombre, precio, cant, getattr(p, 'categoria', None), getattr(p, 'stock_minimo', 1))
-                        producto_sumar.disponible = disponible
-                        self.inventario.agregar_producto(producto_sumar)
-                        p.precio = precio
-                        p.disponible = disponible
+                        if disponible:
+                            # Solo si es vendible, agrega al inventario
+                            producto_sumar = Producto(p.nombre, precio, cant, getattr(p, 'categoria', None), getattr(p, 'stock_minimo', 1))
+                            producto_sumar.disponible = True
+                            self.inventario.agregar_producto(producto_sumar)
+                        # Siempre registra la compra para control de gastos
                         productos_comprados[p.nombre] = (cant, precio, disponible)
+
                 nombre_nuevo = entry_nuevo_nombre.get().strip()
                 cant_nuevo = entry_nuevo_cant.get().strip()
                 precio_compra_nuevo = entry_nuevo_precio_compra.get().strip()
@@ -607,29 +630,40 @@ class CantinaApp:
                 categoria_nuevo = entry_nuevo_categoria.get().strip()
                 stock_min_nuevo = entry_nuevo_stock_min.get().strip()
                 disponible_nuevo = var_nuevo_disponible.get() if hasattr(var_nuevo_disponible, 'get') else True
-                if nombre_nuevo and cant_nuevo and precio_compra_nuevo and precio_venta_nuevo and categoria_nuevo and stock_min_nuevo:
+                if nombre_nuevo and cant_nuevo and precio_compra_nuevo and categoria_nuevo:
                     try:
                         cant_nuevo = int(cant_nuevo)
                         precio_compra_nuevo = float(precio_compra_nuevo)
-                        precio_venta_nuevo = float(precio_venta_nuevo)
-                        stock_min_nuevo = int(stock_min_nuevo)
                         if cant_nuevo <= 0:
                             messagebox.showerror("Error", f"La cantidad para '{nombre_nuevo}' debe ser mayor a 0.")
                             return
-                        if precio_compra_nuevo < 0 or precio_venta_nuevo < 0:
-                            messagebox.showerror("Error", f"El precio no puede ser negativo.")
+                        if precio_compra_nuevo < 0:
+                            messagebox.showerror("Error", f"El precio de compra no puede ser negativo.")
                             return
-                        if stock_min_nuevo < 0:
-                            messagebox.showerror("Error", f"El stock mínimo no puede ser negativo.")
-                            return
-                        nuevo = Producto(nombre_nuevo, precio_venta_nuevo, cant_nuevo, categoria_nuevo, stock_min_nuevo)
-                        nuevo.disponible = disponible_nuevo
-                        self.inventario.agregar_producto(nuevo)
-                        # Guardar ambos precios en productos_comprados
-                        productos_comprados[nombre_nuevo] = (cant_nuevo, precio_compra_nuevo, disponible_nuevo)
+                        if disponible_nuevo:
+                            # Solo pide y valida precio de venta y stock mínimo si es vendible
+                            if not precio_venta_nuevo or not stock_min_nuevo:
+                                messagebox.showerror("Error", "Debe ingresar precio de venta y stock mínimo para productos disponibles.")
+                                return
+                            precio_venta_nuevo = float(precio_venta_nuevo)
+                            stock_min_nuevo = int(stock_min_nuevo)
+                            if precio_venta_nuevo < 0:
+                                messagebox.showerror("Error", f"El precio de venta no puede ser negativo.")
+                                return
+                            if stock_min_nuevo < 0:
+                                messagebox.showerror("Error", f"El stock mínimo no puede ser negativo.")
+                                return
+                            nuevo = Producto(nombre_nuevo, precio_venta_nuevo, cant_nuevo, categoria_nuevo, stock_min_nuevo)
+                            nuevo.disponible = True
+                            self.inventario.agregar_producto(nuevo)
+                            productos_comprados[nombre_nuevo] = (cant_nuevo, precio_compra_nuevo, True)
+                        else:
+                            # No agregues al inventario, solo registra la compra
+                            productos_comprados[nombre_nuevo] = (cant_nuevo, precio_compra_nuevo, False)
                     except Exception as e:
                         messagebox.showerror("Error", f"Error en producto nuevo: {e}")
                         return
+
                 if not productos_comprados:
                     messagebox.showerror("Error", "Debe seleccionar o agregar al menos un producto.")
                     return
@@ -645,7 +679,6 @@ class CantinaApp:
                     self.caja.dinero -= total
                 else:
                     self.banco.saldo -= total
-                messagebox.showinfo("Éxito", "Compra registrada correctamente.")
                 Persistencia.guardar(self.compras, "compras.pkl")
                 Persistencia.guardar(self.inventario, "inventario.pkl")
                 Persistencia.guardar(self.caja, "caja.pkl")
@@ -653,11 +686,11 @@ class CantinaApp:
                 win.destroy()
             except Exception as e:
                 messagebox.showerror("Error", f"Error inesperado al registrar la compra: {e}")
-
+            
     def ver_productos(self):
         """
-        Muestra el inventario de productos en una ventana desplazable, solo los que tienen stock positivo. Permite buscar por nombre/categoría.
-        Mejora estética y usabilidad.
+        Muestra el inventario de productos en una ventana desplazable, resaltando en rojo los productos con stock 0
+        y en amarillo los que están en su stock mínimo.
         """
         win = tk.Toplevel(self.root)
         win.title("Inventario de Productos")
@@ -667,10 +700,8 @@ class CantinaApp:
         frame = tk.Frame(win, bg="#f5f5f5")
         frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
-        # Título
         tk.Label(frame, text="Inventario de Productos", font=("Arial", 16, "bold"), fg="#2c3e50", bg="#f5f5f5").pack(pady=(0, 10))
 
-        # Buscador
         buscador_frame = tk.Frame(frame, bg="#f5f5f5")
         buscador_frame.pack(fill=tk.X, pady=(0, 8))
         tk.Label(buscador_frame, text="🔍 Buscar:", font=("Arial", 12), bg="#f5f5f5").pack(side="left", padx=(0, 5))
@@ -679,7 +710,6 @@ class CantinaApp:
         entry_buscar.pack(side="left", fill=tk.X, expand=True)
         entry_buscar.focus_set()
 
-        # Tabla de productos
         columns = ("nombre", "precio", "stock", "categoria", "stock_minimo")
         tree = ttk.Treeview(frame, columns=columns, show="headings", height=16)
         tree.heading("nombre", text="Nombre")
@@ -693,43 +723,51 @@ class CantinaApp:
         tree.column("categoria", width=140)
         tree.column("stock_minimo", width=110, anchor="e")
 
-        # Estilo visual
         style = ttk.Style()
         style.theme_use('clam')
         style.configure("Treeview.Heading", font=("Arial", 11, "bold"), background="#3498db", foreground="white")
         style.configure("Treeview", font=("Arial", 11), rowheight=28, background="#f5f5f5", fieldbackground="#f5f5f5")
         style.map("Treeview", background=[("selected", "#d0e6fa")])
 
-        # Scrollbar
+        # --- TAG para stock 0 y stock mínimo ---
+        tree.tag_configure('stock_cero', background='#ffcccc')      # rojo claro
+        tree.tag_configure('stock_minimo', background='#fff7b2')    # amarillo claro
+
         scrollbar = tk.Scrollbar(frame, orient="vertical", command=tree.yview)
         tree.configure(yscroll=scrollbar.set)
         tree.pack(side="left", fill=tk.BOTH, expand=True, padx=(0, 0), pady=5)
         scrollbar.pack(side="right", fill=tk.Y)
 
-        # Función para mostrar productos filtrados
         def mostrar_productos():
             tree.delete(*tree.get_children())
             filtro = var_buscar.get().lower()
-            productos = [p for p in self.inventario.listar_productos() if getattr(p, 'disponible', True) and p.stock > 0]
+            productos = self.inventario.listar_productos()
             if filtro:
                 productos = [p for p in productos if filtro in p.nombre.lower() or filtro in getattr(p, 'categoria', '').lower()]
             for p in productos:
-                tree.insert('', 'end', values=(
+                valores = (
                     p.nombre,
                     f"S/{p.precio:.2f}",
                     p.stock,
                     getattr(p, 'categoria', ''),
                     getattr(p, 'stock_minimo', '')
-                ))
+                )
+                # Aplica el tag correspondiente
+                if p.stock == 0:
+                    tag = 'stock_cero'
+                elif hasattr(p, 'stock_minimo') and p.stock == getattr(p, 'stock_minimo', 1) and p.stock > 0:
+                    tag = 'stock_minimo'
+                else:
+                    tag = ''
+                tree.insert('', 'end', values=valores, tags=(tag,))
             if not productos:
                 tree.insert('', 'end', values=("No hay productos que coincidan", "", "", "", ""))
 
         var_buscar.trace('w', lambda *a: mostrar_productos())
         mostrar_productos()
 
-        # Botón cerrar
         tk.Button(win, text="Cerrar", command=win.destroy, bg="#e74c3c", fg="white", font=("Arial", 11, "bold"), relief="flat").pack(pady=12)
-
+            
     def registrar_producto(self):
         """
         Abre un formulario para agregar un producto hecho por la cantina (sin precio de compra).
@@ -819,6 +857,10 @@ class CantinaApp:
             if not nombre:
                 messagebox.showerror("Error", "El nombre no puede estar vacío.", parent=win)
                 return
+            # --- Validación de duplicados por nombre ---
+            if any(p.nombre.lower() == nombre.lower() for p in self.inventario.listar_productos()):
+                messagebox.showerror("Error", f"Ya existe un producto con el nombre '{nombre}'.", parent=win)
+                return
             try:
                 precio_venta = float(precio_venta)
                 stock = int(stock)
@@ -831,21 +873,10 @@ class CantinaApp:
                 return
 
             from Producto import Producto
-            producto_existente = next((p for p in productos_disponibles if p.nombre.lower() == nombre.lower()), None)
-            if producto_existente:
-                # Solo suma stock y actualiza datos
-                producto_existente.precio = precio_venta
-                producto_existente.categoria = categoria
-                producto_existente.stock_minimo = stock_minimo
-                producto_existente.disponible = disponible
-                producto_existente.stock += stock
-                messagebox.showinfo("Éxito", f"Stock actualizado para '{nombre}'.", parent=win)
-            else:
-                nuevo = Producto(nombre, precio_venta, stock, categoria, stock_minimo)
-                nuevo.disponible = disponible
-                nuevo.manual = True  # Marca como producto hecho por la cantina
-                self.inventario.agregar_producto(nuevo)
-                messagebox.showinfo("Éxito", f"Producto '{nombre}' agregado correctamente.", parent=win)
+            nuevo = Producto(nombre, precio_venta, stock, categoria, stock_minimo)
+            nuevo.disponible = disponible
+            nuevo.manual = True  # Marca como producto hecho por la cantina
+            self.inventario.agregar_producto(nuevo)
             Persistencia.guardar(self.inventario, "inventario.pkl")
             win.destroy()
 
@@ -855,6 +886,9 @@ class CantinaApp:
         ttk.Button(btn_frame, text="Cancelar", command=win.destroy).pack(side="left", padx=10)
 
     def seleccionar_elemento_con_busqueda(self, titulo, lista, atributo="nombre", callback=None):
+        """
+        Abre una ventana para buscar y seleccionar un elemento de una lista, usando un campo de búsqueda.
+        """
         win = tk.Toplevel(self.root)
         win.title(titulo)
         win.geometry("400x320")
@@ -1106,7 +1140,10 @@ class CantinaApp:
         tk.Button(win, text="Cerrar", command=win.destroy, bg="#e74c3c", fg="white", font=("Arial", 11, "bold"), relief="flat").pack(pady=10)
 
     def salir(self):
-        # Guarda los datos antes de salir
+        """
+        Guarda los datos antes de salir y muestra una alerta si hay productos con bajo stock.
+        """
+        self.alerta_bajo_stock()  # Muestra la alerta antes de cerrar
         Persistencia.guardar(self.inventario, "inventario.pkl")
         Persistencia.guardar(self.caja, "caja.pkl")
         Persistencia.guardar(self.banco, "banco.pkl")
@@ -1195,12 +1232,10 @@ class CantinaApp:
                 from Alumno import Alumno
                 alumno = Alumno(nombre, grado, saldo_prepago, metodo.lower(), caja, banco)
                 self.clientes.append(alumno)
-                messagebox.showinfo("Éxito", "Alumno registrado con éxito.", parent=win)
             elif tipo == "Profesor":
                 from Profesor import Profesor
                 profesor = Profesor(nombre, grado)
                 self.clientes.append(profesor)
-                messagebox.showinfo("Éxito", "Profesor registrado con éxito.", parent=win)
             else:
                 messagebox.showerror("Error", "Seleccione el tipo de cliente.", parent=win)
                 return
@@ -1223,7 +1258,7 @@ class CantinaApp:
 
         win = tk.Toplevel(self.root)
         win.title("Recargar Cuenta Prepaga")
-        win.geometry("420x320")
+        win.geometry("520x420")
         win.configure(bg="#f5f5f5")
 
         tk.Label(win, text="💳 Recargar Cuenta Prepaga", font=("Arial", 16, "bold"), fg="#2c3e50", bg="#f5f5f5").pack(pady=(18, 10))
@@ -1282,14 +1317,12 @@ class CantinaApp:
                     return
                 self.caja.dinero -= monto
                 alumno.saldo_prepago += monto
-                messagebox.showinfo("Éxito", f"Recarga realizada desde CAJA.\nNuevo saldo prepago: S/{alumno.saldo_prepago:.2f}", parent=win)
             elif metodo == "Banco":
                 if self.banco.saldo < monto:
                     messagebox.showerror("Error", "No hay suficiente dinero en BANCO.", parent=win)
                     return
                 self.banco.saldo -= monto
                 alumno.saldo_prepago += monto
-                messagebox.showinfo("Éxito", f"Recarga realizada desde BANCO.\nNuevo saldo prepago: S/{alumno.saldo_prepago:.2f}", parent=win)
             else:
                 messagebox.showerror("Error", "Seleccione el origen de la recarga.", parent=win)
                 return
@@ -1314,7 +1347,7 @@ class CantinaApp:
 
         win = tk.Toplevel(self.root)
         win.title("Pagar Deuda de Cliente")
-        win.geometry("420x320")
+        win.geometry("520x420")
         win.configure(bg="#f5f5f5")
 
         tk.Label(win, text="💸 Pagar Deuda de Cliente", font=("Arial", 16, "bold"), fg="#2c3e50", bg="#f5f5f5").pack(pady=(18, 10))
@@ -1430,7 +1463,6 @@ class CantinaApp:
                 messagebox.showerror("Error", "Ingrese un monto válido (mayor o igual a 0).", parent=win)
                 return
             self.caja.dinero = nuevo_monto
-            messagebox.showinfo("Éxito", f"Dinero en caja actualizado a S/{nuevo_monto:.2f}", parent=win)
             Persistencia.guardar(self.caja, "caja.pkl")
             win.destroy()
 
@@ -1477,7 +1509,6 @@ class CantinaApp:
                 messagebox.showerror("Error", "Ingrese un monto válido (mayor o igual a 0).", parent=win)
                 return
             self.banco.saldo = nuevo_monto
-            messagebox.showinfo("Éxito", f"Dinero en banco actualizado a S/{nuevo_monto:.2f}", parent=win)
             Persistencia.guardar(self.banco, "banco.pkl")
             win.destroy()
 
@@ -1535,6 +1566,7 @@ class CantinaApp:
         style.configure("Treeview.Heading", font=("Arial", 11, "bold"), background="#2980b9", foreground="white")
         style.configure("Treeview", font=("Arial", 11), rowheight=28, background="#f5f5f5", fieldbackground="#f5f5f5")
         style.map("Treeview", background=[("selected", "#d0e6fa")])
+
         scrollbar = tk.Scrollbar(win, orient="vertical", command=tree.yview)
         tree.configure(yscroll=scrollbar.set)
         tree.pack(side="left", fill=tk.BOTH, expand=True, padx=(0, 0), pady=5)
@@ -1605,7 +1637,6 @@ class CantinaApp:
             nuevo = Proveedor(nombre, contacto, telefono)
             self.proveedores.append(nuevo)
             Persistencia.guardar(self.proveedores, "proveedores.pkl")
-            messagebox.showinfo("Éxito", "Proveedor agregado correctamente.", parent=win)
             win.destroy()
 
         btn_frame = tk.Frame(win, bg="#f5f5f5")
@@ -1712,30 +1743,51 @@ class CantinaApp:
     # --- PRODUCTOS ---
 
     def editar_producto(self):
-        productos = [p for p in self.inventario.listar_productos() if getattr(p, 'disponible', True)]
+        """
+        Edita un producto existente seleccionándolo de una lista.
+        """
+        productos = self.inventario.listar_productos()
         self.editar_elemento(productos, "producto", "nombre", self.editar_producto_individual)
 
     def eliminar_producto(self):
-        productos = [p for p in self.inventario.listar_productos() if getattr(p, 'disponible', True)]
+        """
+        Elimina un producto existente seleccionándolo de una lista.
+        """
+        productos = self.inventario.listar_productos()
         self.eliminar_elemento(productos, "producto", "nombre", lambda: Persistencia.guardar(self.inventario, "inventario.pkl"))
 
     # --- CLIENTES ---
 
     def editar_cliente(self):
+        """
+        Edita un cliente existente seleccionándolo de una lista.
+        """
         self.editar_elemento(self.clientes, "cliente", "nombre", self.editar_cliente_individual)
 
     def eliminar_cliente(self):
+        """
+        Elimina un cliente existente seleccionándolo de una lista.
+        """
         self.eliminar_elemento(self.clientes, "cliente", "nombre", lambda: Persistencia.guardar(self.clientes, "clientes.pkl"))
 
     # --- PROVEEDORES ---
 
     def editar_proveedor(self):
+        """
+        Edita un proveedor existente seleccionándolo de una lista.
+        """
         self.editar_elemento(self.proveedores, "proveedor", "nombre", self.editar_proveedor_individual)
 
     def eliminar_proveedor(self):
+        """
+        Elimina un proveedor existente seleccionándolo de una lista.
+        """
         self.eliminar_elemento(self.proveedores, "proveedor", "nombre", lambda: Persistencia.guardar(self.proveedores, "proveedores.pkl"))
 
     def eliminar_elemento(self, lista, tipo, atributo="nombre", callback_post=None):
+        """
+        Elimina un elemento de una lista (producto, cliente o proveedor) tras confirmación del usuario.
+        """
         if not lista:
             messagebox.showinfo(f"Eliminar {tipo.title()}", f"No hay {tipo}s registrados.")
             return
@@ -1772,9 +1824,9 @@ class CantinaApp:
         self.seleccionar_elemento_con_busqueda(tipo, lista, atributo, editar)
         
     def editar_producto_individual(self, producto):
-        import tkinter as tk
-        from tkinter import ttk, messagebox
-
+        """
+        Abre un formulario moderno para editar un producto.
+        """
         win = tk.Toplevel(self.root)
         win.title(f"Editar Producto: {producto.nombre}")
         win.geometry("420x420")
@@ -1816,6 +1868,7 @@ class CantinaApp:
         entradas["stock_minimo"].insert(0, str(getattr(producto, 'stock_minimo', 1)))
 
         def guardar():
+            nombre_anterior = producto.nombre  # Guarda el nombre original
             nombre = entradas["nombre"].get().strip()
             precio_venta = entradas["precio_venta"].get().strip()
             stock = entradas["stock"].get().strip()
@@ -1826,6 +1879,10 @@ class CantinaApp:
             # Validaciones
             if not nombre:
                 messagebox.showerror("Error", "El nombre no puede estar vacío.", parent=win)
+                return
+            # --- Validación de duplicados por nombre ---
+            if any(p.nombre.lower() == nombre.lower() for p in self.inventario.listar_productos()):
+                messagebox.showerror("Error", f"Ya existe un producto con el nombre '{nombre}'.", parent=win)
                 return
             try:
                 precio_venta = float(precio_venta)
@@ -1846,7 +1903,13 @@ class CantinaApp:
             producto.stock_minimo = stock_minimo
             producto.disponible = disponible
 
-            messagebox.showinfo("Éxito", f"Producto '{nombre}' editado correctamente.", parent=win)
+            # --- ACTUALIZA LA CLAVE EN EL INVENTARIO SI CAMBIA EL NOMBRE ---
+            if hasattr(self.inventario, "_productos"):
+                if nombre_anterior.lower() != nombre.lower():
+                    prod = self.inventario._productos.pop(nombre_anterior.lower(), None)
+                    if prod:
+                        self.inventario._productos[nombre.lower()] = prod
+
             Persistencia.guardar(self.inventario, "inventario.pkl")
             win.destroy()
 
@@ -1854,7 +1917,7 @@ class CantinaApp:
         btn_frame.pack(pady=15)
         ttk.Button(btn_frame, text="Guardar cambios", command=guardar, style="Accent.TButton").pack(side="left", padx=10)
         ttk.Button(btn_frame, text="Cancelar", command=win.destroy).pack(side="left", padx=10)
-        
+    
     def editar_proveedor_individual(self, proveedor):
         """
         Abre un formulario moderno para editar un proveedor.
@@ -1898,7 +1961,6 @@ class CantinaApp:
             proveedor.contacto = contacto
             proveedor.telefono = telefono
             Persistencia.guardar(self.proveedores, "proveedores.pkl")
-            messagebox.showinfo("Éxito", "Proveedor editado correctamente.", parent=win)
             win.destroy()
 
         btn_frame = tk.Frame(win, bg="#f5f5f5")
@@ -1979,10 +2041,26 @@ class CantinaApp:
                     messagebox.showerror("Error", "Deuda inválida.", parent=win)
                     return
             Persistencia.guardar(self.clientes, "clientes.pkl")
-            messagebox.showinfo("Éxito", "Cliente editado correctamente.", parent=win)
             win.destroy()
 
         btn_frame = tk.Frame(win, bg="#f5f5f5")
         btn_frame.pack(pady=10)
         tk.Button(btn_frame, text="Guardar", command=guardar, bg="#27ae60", fg="white", font=("Arial", 12, "bold"), relief="flat", width=12).pack(side="left", padx=8)
         tk.Button(btn_frame, text="Cancelar", command=win.destroy, bg="#e74c3c", fg="white", font=("Arial", 12, "bold"), relief="flat", width=12).pack(side="left", padx=8)
+        
+    # ELIMINAR
+    def eliminar_cliente_por_nombre(self, nombre):
+        self.clientes = [c for c in self.clientes if getattr(c, "nombre", "") != nombre]
+
+    def eliminar_proveedor_por_nombre(self, nombre):
+        self.proveedores = [p for p in self.proveedores if getattr(p, "nombre", "") != nombre]
+
+    def posicionar_ventana_arriba(self, win, ancho, alto):
+        """
+        Posiciona la ventana win centrada horizontalmente y pegada arriba de la pantalla.
+        """
+        win.update_idletasks()
+        pantalla_ancho = win.winfo_screenwidth()
+        x = (pantalla_ancho // 2) - (ancho // 2)
+        y = 0  # bien arriba
+        win.geometry(f"{ancho}x{alto}+{x}+{y}")
