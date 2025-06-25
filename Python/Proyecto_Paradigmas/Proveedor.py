@@ -28,24 +28,3 @@ class Proveedor:
     def saldo(self):
         """Saldo a favor del proveedor."""
         return self._saldo
-
-    # Metodos
-    def recibir_pago(self, monto):
-        """
-        Suma un pago al saldo del proveedor.
-        Lanza un error si el monto es negativo.
-        """
-        if monto < 0:
-            raise ValueError("El monto a pagar no puede ser negativo.")
-        self._saldo += monto
-
-    def __str__(self):
-        """
-        Representación en texto del proveedor.
-        """
-        info = f"Proveedor: {self._nombre} - Se le Pago: S/{self._saldo:.2f}"
-        if hasattr(self, 'contacto') and self.contacto:
-            info += f" | Contacto: {self.contacto}"
-        if hasattr(self, 'telefono') and self.telefono:
-            info += f" | Tel: {self.telefono}"
-        return info

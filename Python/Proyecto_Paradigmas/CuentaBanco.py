@@ -16,10 +16,3 @@ class CuentaBanco:
     def saldo(self, valor):
         """Permite actualizar el saldo del banco."""
         self._saldo = valor
-
-    # Metodos
-    def __str__(self):
-        """
-        Representación en texto del saldo bancario.
-        """
-        return f"Dinero en banco: S/{self._saldo:.2f}"

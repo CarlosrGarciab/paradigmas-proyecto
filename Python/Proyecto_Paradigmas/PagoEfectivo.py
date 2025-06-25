@@ -8,13 +8,6 @@ class PagoEfectivo(Pago):
         super().__init__(monto)
         self._caja = caja
 
-    @property
-    def caja(self):
-        """
-        Obtiene la caja asociada al pago en efectivo.
-        """
-        return self._caja
-
     def procesar_pago(self, monto):
         """
         Procesa el pago en efectivo.

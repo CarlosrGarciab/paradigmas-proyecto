@@ -11,7 +11,6 @@ class PagoTransferencia(Pago):
         super().__init__(monto)
         self._banco = banco
 
-    # Metodos
     def procesar_pago(self, monto):
         """
         Procesa el pago por transferencia, sumando el monto al banco usando la propiedad saldo.

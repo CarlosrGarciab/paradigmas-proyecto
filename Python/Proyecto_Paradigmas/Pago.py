@@ -10,7 +10,6 @@ class Pago(ABC):
         """
         self._monto = monto
 
-    # Getters y Setters
     @property
     def monto(self):
         """Monto del pago."""
@@ -21,7 +20,6 @@ class Pago(ABC):
         """Permite actualizar el monto del pago."""
         self._monto = monto_nuevo
 
-    # Métodos abstractos
     @abstractmethod
     def procesar_pago(self, monto):
         """

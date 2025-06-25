@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import messagebox, simpledialog, ttk, PhotoImage
+from tkinter import messagebox, simpledialog, ttk
 from Inventario import Inventario
 from Caja import Caja
 from CuentaBanco import CuentaBanco
@@ -354,8 +354,8 @@ class CantinaApp:
             # Busca si ya existe el producto
             producto_existente = next((p for p in self.inventario.listar_productos() if p.nombre.lower() == nombre.lower()), None)
             if producto_existente:
-                # Suma el stock y actualiza los datos
-                producto_existente.stock += stock
+                # Suma el stock usando el método de la clase
+                producto_existente.agregar_stock(stock)
                 producto_existente.precio = precio_venta
                 producto_existente.categoria = categoria
                 producto_existente.stock_minimo = stock_minimo
@@ -1259,13 +1259,12 @@ class CantinaApp:
                     monto_entregado = simpledialog.askfloat("Pago en efectivo", f"Total a pagar: Gs{total:.2f}\nIngrese el monto entregado por el cliente:")
                     if monto_entregado is None:
                         return
-                    if monto_entregado < total:
+                    metodo_pago = PagoEfectivo(self.caja, total)
+                    if not metodo_pago.procesar_pago(monto_entregado):
                         messagebox.showerror("Error", "El monto entregado es menor al total a pagar.")
                         return
                     vuelto = monto_entregado - total
-                    if self.caja.dinero is not None:
-                        self.caja.dinero += total
-                    metodo_pago = PagoEfectivo(self.caja, total)
+                    self.caja.dinero += total
                     messagebox.showinfo("Vuelto", f"Vuelto a entregar al cliente: Gs{vuelto:.2f}")
                 elif metodo == "Prepago":
                     alumnos = [c for c in self.clientes if hasattr(c, 'saldo_prepago')]
@@ -1277,15 +1276,15 @@ class CantinaApp:
                     if not cliente:
                         messagebox.showerror("Error", "Seleccione un alumno válido.")
                         return
-                    if cliente.saldo_prepago < total:
-                        messagebox.showerror("Error", f"Saldo prepago insuficiente para {cliente.nombre}.")
-                        return
-                    cliente.saldo_prepago -= total
                     metodo_pago = PagoPrepago(cliente, total)
+                    try:
+                        metodo_pago.procesar_pago(total)
+                    except ValueError as e:
+                        messagebox.showerror("Error", str(e))
+                        return
                 elif metodo == "Transferencia":
-                    if self.banco.saldo is not None:
-                        self.banco.saldo += total
                     metodo_pago = PagoTransferencia(self.banco, total)
+                    metodo_pago.procesar_pago(total)
                 elif metodo == "Deuda":
                     nombre_sel = var_cliente_nombre.get()
                     cliente = next((c for c in self.clientes if c.nombre == nombre_sel), None)
@@ -1294,8 +1293,8 @@ class CantinaApp:
                         return
                     if not hasattr(cliente, 'deuda'):
                         cliente.deuda = 0
-                    cliente.deuda += total
                     metodo_pago = PagoDeuda(cliente, total)
+                    metodo_pago.procesar_pago(total)
                 else:
                     messagebox.showerror("Error", "Método de pago no válido.")
                     return

@@ -68,30 +68,7 @@ class Producto:
     def disponible(self, valor):
         self._disponible = bool(valor)
 
-    # Métodos de negocio centralizados
     def agregar_stock(self, cantidad):
         if cantidad <= 0:
             raise ValueError("La cantidad a agregar debe ser positiva.")
         self._stock += cantidad
-
-    def vender(self, cantidad):
-        if cantidad <= 0:
-            raise ValueError("La cantidad a vender debe ser positiva.")
-        if cantidad > self._stock:
-            raise ValueError("Stock insuficiente.")
-        self._stock -= cantidad
-
-    def actualizar_datos(self, nombre=None, precio=None, categoria=None, stock_minimo=None, disponible=None):
-        if nombre is not None:
-            self.nombre = nombre
-        if precio is not None:
-            self.precio = precio
-        if categoria is not None:
-            self.categoria = categoria
-        if stock_minimo is not None:
-            self.stock_minimo = stock_minimo
-        if disponible is not None:
-            self.disponible = disponible
-
-    def __str__(self):
-        return f"{self.nombre} - Precio: {self.precio:.2f} - Stock: {self.stock} - Categoría: {self.categoria or 'Sin categoría'} - {'Disponible' if self.disponible else 'No disponible para venta'}"

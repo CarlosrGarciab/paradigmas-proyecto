@@ -54,8 +54,7 @@ class Inventario:
         return [p for p in self._productos.values() if p.stock <= p.stock_minimo]
 
     def buscar_producto_por_nombre(self, nombre):
-        """Busca un producto por nombre (ignorando mayúsculas/minúsculas). Acepta string o Producto."""
-        # Si nombre es un objeto Producto, extrae el nombre
+        """Busca un producto por nombre (ignorando mayúsculas/minúsculas)"""
         if hasattr(nombre, 'nombre'):
             nombre = nombre.nombre
         if not isinstance(nombre, str):
@@ -64,27 +63,3 @@ class Inventario:
             if producto.nombre.lower() == nombre.lower():
                 return producto
         return None
-
-    def agregar_o_sumar_producto(self, producto, cantidad):
-        """Si existe suma stock usando el método del producto, si no lo agrega."""
-        existente = self.buscar_producto(producto.nombre)
-        if existente:
-            existente.agregar_stock(cantidad)
-        else:
-            self._productos[producto.nombre.lower()] = producto
-
-    def actualizar_producto(self, nombre_producto, **kwargs):
-        """Actualiza los datos de un producto existente."""
-        producto = self.buscar_producto(nombre_producto)
-        if producto:
-            producto.actualizar_datos(**kwargs)
-        else:
-            raise KeyError("Producto no encontrado.")
-
-    def __str__(self):
-        """
-        Representación en texto del inventario.
-        """
-        if not self._productos:
-            return "El inventario está vacío."
-        return "\n".join(str(p) for p in self._productos.values())

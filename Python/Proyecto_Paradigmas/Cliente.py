@@ -44,28 +44,3 @@ class Cliente(ABC):
     def deuda(self, valor):
         """Permite actualizar la deuda del cliente."""
         self._deuda = valor
-
-    # Métodos
-    def adquirir_deuda(self, monto):
-        """
-        Suma una nueva deuda al cliente.
-        """
-        if monto <= 0:
-            raise ValueError("El monto de la deuda debe ser positivo.")
-        self._deuda += monto
-
-    def pagar_deuda(self, monto):
-        """
-        Permite pagar parte o toda la deuda del cliente.
-        """
-        if monto <= 0:
-            raise ValueError("El monto a pagar debe ser positivo.")
-        if monto > self._deuda:
-            raise ValueError("El monto a pagar no puede ser mayor que la deuda actual.")
-        self._deuda -= monto
-        
-    def __str__(self):
-        """
-        Representación en texto del cliente.
-        """
-        return f"Cliente: {self._nombre} - Grado: {self._grado} - Deuda: S/{self._deuda:.2f}"
