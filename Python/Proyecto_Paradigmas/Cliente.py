@@ -14,7 +14,6 @@ class Cliente(ABC):
         self._grado = grado
         self._deuda = 0.0
 
-    # Getters y Setters
     @property
     def nombre(self):
         """Nombre del cliente."""

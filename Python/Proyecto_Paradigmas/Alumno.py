@@ -30,3 +30,8 @@ class Alumno(Cliente):
     def saldo_prepago(self, nuevo_saldo):
         """ Actualiza el saldo prepago del alumno."""
         self._saldo_prepago = nuevo_saldo
+        
+    def recargar_cuenta_prepaga(self, monto):
+        if monto <= 0:
+            raise ValueError("El monto debe ser positivo.")
+        self.saldo_prepago += monto

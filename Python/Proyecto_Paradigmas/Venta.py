@@ -1,19 +1,16 @@
-from PagoEfectivo import PagoEfectivo
-
 class Venta:
     """
     Representa una venta realizada en la cantina.
-    Incluye los productos vendidos, el método de pago, el inventario, la caja y el cliente.
+    Incluye los productos vendidos, el método de pago, el inventario y el cliente.
     """
 
-    def __init__(self, productos_vendidos, metodo_pago, inventario, caja, cliente=None, fecha=None):
+    def __init__(self, productos_vendidos, metodo_pago, inventario, cliente=None, fecha=None):
         """
         productos_vendidos: diccionario con nombre_producto como clave y cantidad como valor.
         """
         self._productos_vendidos = {}
         self._metodo_pago = metodo_pago
         self._inventario = inventario
-        self._caja = caja
         self._cliente = cliente
         self._total = 0
         self._fecha = fecha
@@ -38,10 +35,6 @@ class Venta:
         return self._inventario
 
     @property
-    def caja(self):
-        return self._caja
-
-    @property
     def cliente(self):
         return self._cliente
 
@@ -52,7 +45,7 @@ class Venta:
     @property
     def fecha(self):
         return self._fecha
-    
+
     def calcular_total(self):
         total = 0
         for nombre_producto, cantidad in self._productos_vendidos.items():

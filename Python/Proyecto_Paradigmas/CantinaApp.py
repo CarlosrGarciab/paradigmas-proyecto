@@ -406,28 +406,27 @@ class CantinaApp:
         frame.pack(fill=tk.BOTH, expand=True, padx=18, pady=10)
 
         # Campos del formulario
-        tk.Label(frame, text="Tipo de cliente *", font=("Arial", 12), bg="#f5f5f5").pack(anchor="w", pady=(0, 2))
+        tk.Label(frame, text="Tipo de cliente", font=("Arial", 12), bg="#f5f5f5").pack(anchor="w", pady=(0, 2))
         var_tipo = tk.StringVar(value="Alumno")
         tipo_frame = tk.Frame(frame, bg="#f5f5f5")
         tipo_frame.pack(anchor="w", pady=(0, 8))
         tk.Radiobutton(tipo_frame, text="Alumno", variable=var_tipo, value="Alumno", bg="#f5f5f5").pack(side="left")
         tk.Radiobutton(tipo_frame, text="Profesor", variable=var_tipo, value="Profesor", bg="#f5f5f5").pack(side="left")
 
-        tk.Label(frame, text="Nombre *", font=("Arial", 12), bg="#f5f5f5").pack(anchor="w", pady=(0, 2))
+        tk.Label(frame, text="Nombre", font=("Arial", 12), bg="#f5f5f5").pack(anchor="w", pady=(0, 2))
         entry_nombre = tk.Entry(frame, font=("Arial", 12), bg="#ecf0f1", relief="flat")
         entry_nombre.pack(fill=tk.X, pady=(0, 8))
 
-        tk.Label(frame, text="Grado/Lugar *", font=("Arial", 12), bg="#f5f5f5").pack(anchor="w", pady=(0, 2))
+        tk.Label(frame, text="Grado/Lugar", font=("Arial", 12), bg="#f5f5f5").pack(anchor="w", pady=(0, 2))
         entry_grado = tk.Entry(frame, font=("Arial", 12), bg="#ecf0f1", relief="flat")
         entry_grado.pack(fill=tk.X, pady=(0, 8))
 
-        # Para alumno: saldo prepago y metodo
         frame_alumno = tk.Frame(frame, bg="#f5f5f5")
-        tk.Label(frame_alumno, text="Saldo inicial prepago *", font=("Arial", 12), bg="#f5f5f5").pack(anchor="w", pady=(0, 2))
+        tk.Label(frame_alumno, text="Saldo inicial prepago", font=("Arial", 12), bg="#f5f5f5").pack(anchor="w", pady=(0, 2))
         entry_saldo = tk.Entry(frame_alumno, font=("Arial", 12), bg="#ecf0f1", relief="flat")
         entry_saldo.pack(fill=tk.X, pady=(0, 8))
-        tk.Label(frame_alumno, text="¿Dónde se deposita el saldo prepago? *", font=("Arial", 12), bg="#f5f5f5").pack(anchor="w", pady=(0, 2))
-        var_metodo = tk.StringVar()
+        tk.Label(frame_alumno, text="¿Dónde se deposita el saldo prepago?", font=("Arial", 12), bg="#f5f5f5").pack(anchor="w", pady=(0, 2))
+        var_metodo = tk.StringVar(value="Caja")
         metodo_frame = tk.Frame(frame_alumno, bg="#f5f5f5")
         metodo_frame.pack(anchor="w", pady=(0, 8))
         tk.Radiobutton(metodo_frame, text="Caja", variable=var_metodo, value="Caja", bg="#f5f5f5").pack(side="left")
@@ -626,7 +625,7 @@ class CantinaApp:
 
         # Dónde se deposita la recarga
         tk.Label(frame, text="¿Dónde se deposita la recarga? *", font=("Arial", 12), bg="#f5f5f5").pack(anchor="w")
-        var_metodo = tk.StringVar()
+        var_metodo = tk.StringVar(value="Caja")
         metodo_frame = tk.Frame(frame, bg="#f5f5f5")
         metodo_frame.pack(anchor="w", pady=(0, 8))
         tk.Radiobutton(metodo_frame, text="Caja", variable=var_metodo, value="Caja", bg="#f5f5f5").pack(side="left")
@@ -655,14 +654,14 @@ class CantinaApp:
                 if self.caja.dinero < monto:
                     messagebox.showerror("Error", "No hay suficiente dinero en CAJA.", parent=win)
                     return
-                self.caja.dinero -= monto
-                alumno.saldo_prepago += monto
+                self.caja.ingresar_dinero(monto)
+                alumno.recargar_cuenta_prepaga(monto)
             elif metodo == "Banco":
                 if self.banco.saldo < monto:
                     messagebox.showerror("Error", "No hay suficiente dinero en BANCO.", parent=win)
                     return
-                self.banco.saldo -= monto
-                alumno.saldo_prepago += monto
+                self.banco.ingresar_dinero(monto)
+                alumno.recargar_cuenta_prepaga(monto)
             else:
                 messagebox.showerror("Error", "Seleccione el origen de la recarga.", parent=win)
                 return
@@ -734,7 +733,7 @@ class CantinaApp:
         entry_monto.pack(fill=tk.X, pady=(0, 8))
 
         tk.Label(frame, text="¿Dónde se recibe el pago? *", font=("Arial", 12), bg="#f5f5f5").pack(anchor="w")
-        var_metodo = tk.StringVar()
+        var_metodo = tk.StringVar(value="Caja")
         metodo_frame = tk.Frame(frame, bg="#f5f5f5")
         metodo_frame.pack(anchor="w", pady=(0, 8))
         tk.Radiobutton(metodo_frame, text="Caja", variable=var_metodo, value="Caja", bg="#f5f5f5").pack(side="left")
@@ -763,11 +762,11 @@ class CantinaApp:
                 return
             metodo = var_metodo.get()
             if metodo == "Caja":
-                self.caja.dinero += monto
+                self.caja.ingresar_dinero(monto)
                 cliente.deuda -= monto
                 messagebox.showinfo("Éxito", f"Pago recibido en CAJA. Deuda restante: Gs/{cliente.deuda:.2f}", parent=win)
             elif metodo == "Banco":
-                self.banco.saldo += monto
+                self.banco.ingresar_dinero(monto)
                 cliente.deuda -= monto
                 messagebox.showinfo("Éxito", f"Pago recibido en BANCO. Deuda restante: Gs/{cliente.deuda:.2f}", parent=win)
             else:
@@ -799,7 +798,7 @@ class CantinaApp:
         frame = tk.Frame(win, bg="#f5f5f5")
         frame.pack(fill=tk.BOTH, expand=True, padx=18, pady=10)
 
-        tk.Label(frame, text="Nombre *", font=("Arial", 12), bg="#f5f5f5").pack(anchor="w", pady=(0, 2))
+        tk.Label(frame, text="Nombre", font=("Arial", 12), bg="#f5f5f5").pack(anchor="w", pady=(0, 2))
         entry_nombre = tk.Entry(frame, font=("Arial", 12), bg="#ecf0f1", relief="flat")
         entry_nombre.pack(fill=tk.X, pady=(0, 8))
 
@@ -1264,7 +1263,7 @@ class CantinaApp:
                         messagebox.showerror("Error", "El monto entregado es menor al total a pagar.")
                         return
                     vuelto = monto_entregado - total
-                    self.caja.dinero += total
+                    self.caja.ingresar_dinero(total)
                     messagebox.showinfo("Vuelto", f"Vuelto a entregar al cliente: Gs{vuelto:.2f}")
                 elif metodo == "Prepago":
                     alumnos = [c for c in self.clientes if hasattr(c, 'saldo_prepago')]
@@ -1534,11 +1533,11 @@ class CantinaApp:
                 fecha = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
                 compra = Compra(proveedor, fecha, productos_comprados)
                 self.compras.append(compra)
-                total = sum(cant * precio for (cant, precio, _) in productos_comprados.values())
+                total = compra.calcular_total()
                 if metodo == "Caja":
-                    self.caja.dinero -= total
+                    self.caja.retirar_dinero(total)
                 else:
-                    self.banco.saldo -= total
+                    self.banco.retirar_dinero(total)
                 Persistencia.guardar(self.compras, "compras.pkl")
                 Persistencia.guardar(self.inventario, "inventario.pkl")
                 Persistencia.guardar(self.caja, "caja.pkl")

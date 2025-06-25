@@ -13,7 +13,6 @@ class Proveedor:
         self.contacto = contacto
         self.telefono = telefono
 
-    # Getters y Setters
     @property
     def nombre(self):
         """Nombre del proveedor."""

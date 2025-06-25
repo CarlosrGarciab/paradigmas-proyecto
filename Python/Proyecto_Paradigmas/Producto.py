@@ -11,7 +11,6 @@ class Producto:
         self.stock_minimo = stock_minimo
         self.disponible = disponible
 
-    # Getters y Setters
     @property
     def nombre(self):
         return self._nombre

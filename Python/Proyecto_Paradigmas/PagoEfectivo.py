@@ -13,4 +13,4 @@ class PagoEfectivo(Pago):
         Procesa el pago en efectivo.
         Verifica si el monto recibido es suficiente.
         """
-        return monto <= self.monto
+        return monto >= self.monto
