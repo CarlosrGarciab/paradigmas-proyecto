@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Panel Principal - TODOLIST{% endblock %}
+
+{% block extra_css %}
+    <link href="{{ url_for('static', filename='css/index.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <div class="page-container">
+        <!-- Estadísticas -->
+        <div class="row mb-4">
+            <div class="col-lg-4 mb-3">
+                <div class="stats-card floating">
+                    <div class="stat-item">
+                        <h3 id="total-tasks">{{ stats.total }}</h3>
+                        <small>Total de Tareas</small>
+                    </div>
+                    <div class="stat-item">
+                        <h4 id="pending-tasks">{{ stats.pending }}</h4>
+                        <small>Pendientes</small>
+                    </div>
+                    <div class="stat-item">
+                        <h4 id="completed-tasks">{{ stats.completed }}</h4>
+                        <small>Completadas</small>
+                    </div>
+                    
+                    <div class="custom-progress">
+                        <div class="custom-progress-bar" style="width: {{ stats.completion_rate }}%"></div>
+                    </div>
+                    <small class="text-center d-block mt-2">{{ "%.1f"|format(stats.completion_rate) }}% Completado</small>
+                </div>
+            </div>
+            
+            <div class="col-lg-8">
+                <div class="tasks-card">
+                    <div class="tasks-card-header">
+                        <h5>Gestión de Tareas</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- Filtros -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <select class="form-select form-select-custom" id="filterStatus" onchange="filterTasks()">
+                                    <option value="all">Todas las tareas</option>
+                                    <option value="pending">Solo pendientes</option>
+                                    <option value="completed">Solo completadas</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <select class="form-select form-select-custom" id="filterPriority" onchange="filterTasks()">
+                                    <option value="all">Todas las prioridades</option>
+                                    <option value="high">Alta prioridad</option>
+                                    <option value="medium">Media prioridad</option>
+                                    <option value="low">Baja prioridad</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Lista de tareas -->
+                        <div class="tasks-list" id="tasksList">
+                            {% if tasks %}
+                                {% for task in tasks %}
+                                <div class="task-item" data-task-id="{{ task.id }}" data-priority="{{ task.priority }}" data-status="{{ 'completed' if task.completed else 'pending' }}">
+                                    <div class="d-flex align-items-start">
+                                        <div class="me-3">
+                                            <input type="checkbox" class="custom-checkbox" 
+                                                   {% if task.completed %}checked{% endif %}
+                                                   onchange="toggleTask({{ task.id }}, this.checked)">
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="task-title mb-2">{{ task.title }}</h6>
+                                            {% if task.description %}
+                                            <p class="task-description mb-2">{{ task.description }}</p>
+                                            {% endif %}
+                                            <div class="d-flex align-items-center gap-3 flex-wrap">
+                                                <span class="priority-badge {{ task.priority }}">{{ task.priority }}</span>
+                                                <small class="text-muted">Creada: {{ task.created_at.strftime('%d/%m/%Y') }}</small>
+                                                {% if task.completed %}
+                                                <small class="text-success">Completada: {{ task.completed_at.strftime('%d/%m/%Y') if task.completed_at else 'N/A' }}</small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="ms-3">
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                    Acciones
+                                                </button>
+                                                <ul class="dropdown-menu custom-dropdown">
+                                                    <li><a class="dropdown-item" href="{{ url_for('edit_task', task_id=task.id) }}">Editar</a></li>
+                                                    <li><a class="dropdown-item text-danger" href="#" onclick="deleteTask({{ task.id }})">Eliminar</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="empty-state">
+                                    <div class="empty-state-icon">
+                                        ✓
+                                    </div>
+                                    <h4>¡Excelente trabajo!</h4>
+                                    <p>No tienes tareas pendientes. ¿Qué tal si creas una nueva?</p>
+                                    <a href="{{ url_for('add_task') }}" class="btn btn-primary-custom">Crear Nueva Tarea</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

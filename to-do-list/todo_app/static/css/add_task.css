@@ -1,0 +1,225 @@
+/* ===== ADD_TASK.CSS - FORMULARIO SIMPLE ===== */
+
+/* Variables para agregar tarea */
+:root {
+    --form-bg: #ffffff;
+    --form-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --form-border: 1px solid #e9ecef;
+    --input-border: #ced4da;
+    --input-focus: #3498db;
+    --button-primary: #3498db;
+    --button-secondary: #6c757d;
+}
+
+/* Layout simple */
+.add-task-container {
+    background-color: #f8f9fa;
+    min-height: calc(100vh - 60px);
+    padding: 2rem 0;
+}
+
+/* Formulario simple */
+.form-container {
+    background: var(--form-bg);
+    border-radius: 12px;
+    padding: 2.5rem;
+    box-shadow: var(--form-shadow);
+    border: var(--form-border);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Encabezado simple */
+.form-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.form-header h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.form-header p {
+    color: #6c757d;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Grupos de formulario simples */
+.form-group-custom {
+    margin-bottom: 1.5rem;
+}
+
+.form-label-custom {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+/* Campos de entrada simples */
+.form-control-custom {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    background: white;
+}
+
+.form-control-custom:focus {
+    outline: none;
+    border-color: var(--input-focus);
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.25);
+}
+
+.form-control-custom::placeholder {
+    color: #adb5bd;
+    font-style: italic;
+}
+
+/* Textarea simple */
+.form-control-custom.textarea {
+    min-height: 100px;
+    resize: vertical;
+    font-family: inherit;
+    line-height: 1.5;
+}
+
+/* Select simple */
+.form-select-custom {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    font-size: 1rem;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-select-custom:focus {
+    outline: none;
+    border-color: var(--input-focus);
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.25);
+}
+
+/* Botones del formulario simples */
+.form-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.btn-form-custom {
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    min-width: 120px;
+}
+
+.btn-submit-custom {
+    background-color: var(--button-primary);
+    color: white;
+}
+
+.btn-submit-custom:hover {
+    background-color: #2980b9;
+    color: white;
+}
+
+.btn-cancel-custom {
+    background-color: var(--button-secondary);
+    color: white;
+    text-decoration: none;
+}
+
+.btn-cancel-custom:hover {
+    background-color: #5a6268;
+    color: white;
+    text-decoration: none;
+}
+
+/* Mensajes de validación simples */
+.validation-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid #f5c6cb;
+    font-weight: 500;
+}
+
+/* Estados de error simples */
+.form-control-custom.error {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25);
+}
+
+.field-error {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    font-weight: 500;
+}
+
+/* Responsive simple */
+@media (max-width: 768px) {
+    .add-task-container {
+        padding: 1rem;
+    }
+    
+    .form-container {
+        padding: 2rem 1.5rem;
+        margin: 1rem;
+    }
+    
+    .form-header h2 {
+        font-size: 1.75rem;
+    }
+    
+    .form-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn-form-custom {
+        width: 100%;
+        max-width: 250px;
+    }
+}
+
+@media (max-width: 576px) {
+    .form-container {
+        padding: 1.5rem 1rem;
+        margin: 0.5rem;
+    }
+    
+    .form-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .form-control-custom,
+    .form-select-custom {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.95rem;
+    }
+}

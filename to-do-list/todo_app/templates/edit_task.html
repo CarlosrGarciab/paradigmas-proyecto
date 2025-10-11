@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Tarea - TODOLIST{% endblock %}
+
+{% block extra_css %}
+    <link href="{{ url_for('static', filename='css/edit_task.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="edit-task-container">
+    <div class="page-container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="edit-form-container">
+                    <div class="edit-header">
+                        <h2>Editar Tarea</h2>
+                        <p class="subtitle">Modifica los detalles de tu tarea</p>
+                        <div class="task-info">
+                            Editando: "{{ task.title }}"
+                        </div>
+                    </div>
+
+                    {% if task.completed %}
+                    <div class="task-status completed">
+                        Esta tarea está completada ✓
+                    </div>
+                    {% else %}
+                    <div class="task-status">
+                        Estado: Pendiente
+                    </div>
+                    {% endif %}
+
+                    <form method="POST" action="{{ url_for('edit_task', task_id=task.id) }}">
+                        <div class="edit-form-group">
+                            <label for="title" class="edit-label">
+                                Título de la Tarea
+                            </label>
+                            <input type="text" 
+                                   class="edit-control" 
+                                   id="title" 
+                                   name="title" 
+                                   value="{{ task.title }}"
+                                   placeholder="Título de la tarea"
+                                   required>
+                        </div>
+
+                        <div class="edit-form-group">
+                            <label for="description" class="edit-label">
+                                Descripción
+                            </label>
+                            <textarea class="edit-control textarea" 
+                                      id="description" 
+                                      name="description" 
+                                      rows="4"
+                                      placeholder="Describe los detalles de tu tarea...">{{ task.description or '' }}</textarea>
+                        </div>
+
+                        <div class="edit-form-group">
+                            <label for="priority" class="edit-label">
+                                Prioridad
+                            </label>
+                            <select class="edit-select" id="priority" name="priority" required>
+                                <option value="low" {% if task.priority == 'low' %}selected{% endif %}>
+                                    Baja - Puede esperar
+                                </option>
+                                <option value="medium" {% if task.priority == 'medium' %}selected{% endif %}>
+                                    Media - Importante
+                                </option>
+                                <option value="high" {% if task.priority == 'high' %}selected{% endif %}>
+                                    Alta - Urgente
+                                </option>
+                            </select>
+                            <div class="priority-visual">
+                                <div class="priority-dot {{ task.priority }}"></div>
+                                <span class="priority-text">Prioridad {{ task.priority }}</span>
+                            </div>
+                        </div>
+
+                        <div class="edit-buttons">
+                            <button type="submit" class="btn-edit-custom btn-update-custom">
+                                Actualizar Tarea
+                            </button>
+                            <a href="{{ url_for('index') }}" class="btn-edit-custom btn-back-custom">
+                                Volver al Panel
+                            </a>
+                        </div>
+                    </form>
+
+                    <!-- Sección de información de la tarea removida -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmación para eliminar -->
+<!-- Modal de confirmación para eliminar removido -->
+{% endblock %}
+
+{% block scripts %}
+<!-- Función confirmDelete removida -->
+{% endblock %}

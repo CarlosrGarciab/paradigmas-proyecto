@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Nueva Tarea - TODOLIST{% endblock %}
+
+{% block extra_css %}
+    <link href="{{ url_for('static', filename='css/add_task.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="add-task-container">
+    <div class="page-container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="form-container">
+                    <div class="form-header">
+                        <h2>Crear Nueva Tarea</h2>
+                        <p>Añade una nueva tarea a tu lista de pendientes</p>
+                    </div>
+
+                    <form method="POST" action="{{ url_for('add_task') }}">
+                        <div class="form-group-custom">
+                            <label for="title" class="form-label-custom">Título de la Tarea</label>
+                            <input type="text" 
+                                   class="form-control-custom" 
+                                   id="title" 
+                                   name="title" 
+                                   placeholder="Ej: Completar informe mensual"
+                                   required>
+                        </div>
+
+                        <div class="form-group-custom">
+                            <label for="description" class="form-label-custom">Descripción (Opcional)</label>
+                            <textarea class="form-control-custom textarea" 
+                                      id="description" 
+                                      name="description" 
+                                      rows="4"
+                                      placeholder="Describe los detalles de tu tarea..."></textarea>
+                        </div>
+
+                        <div class="form-group-custom">
+                            <label for="priority" class="form-label-custom">Prioridad</label>
+                            <select class="form-select-custom" id="priority" name="priority" required>
+                                <option value="">Selecciona la prioridad</option>
+                                <option value="low">Baja - Puede esperar</option>
+                                <option value="medium">Media - Importante</option>
+                                <option value="high">Alta - Urgente</option>
+                            </select>
+                        </div>
+
+                        <div class="form-buttons">
+                            <button type="submit" class="btn-form-custom btn-submit-custom">
+                                Crear Tarea
+                            </button>
+                            <a href="{{ url_for('index') }}" class="btn-form-custom btn-cancel-custom">
+                                Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

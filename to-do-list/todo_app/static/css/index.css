@@ -1,0 +1,358 @@
+/* ===== INDEX.CSS - PÁGINA PRINCIPAL SIMPLE ===== */
+
+/* Variables específicas para la página principal */
+:root {
+    --card-bg: #ffffff;
+    --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --card-border: 1px solid #e9ecef;
+    --stats-primary: #3498db;
+    --stats-success: #27ae60;
+    --stats-warning: #f39c12;
+    --stats-danger: #e74c3c;
+}
+
+/* Layout principal simple */
+.main-container {
+    background-color: #f8f9fa;
+    min-height: calc(100vh - 60px);
+    padding: 2rem 0;
+}
+
+/* Estadísticas simplificadas */
+.stats-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: var(--card-shadow);
+    border: var(--card-border);
+    margin-bottom: 2rem;
+}
+
+.stat-item {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    border: 1px solid #e9ecef;
+}
+
+.stat-item h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--stats-primary);
+}
+
+.stat-item h4 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    color: var(--stats-success);
+}
+
+.stat-item small {
+    font-size: 0.9rem;
+    color: #495057;
+    font-weight: 600;
+}
+
+/* Texto del porcentaje */
+.text-center.d-block.mt-2 {
+    color: #495057 !important;
+    font-weight: 600 !important;
+    font-size: 0.95rem !important;
+}
+
+/* Barra de progreso simple */
+.custom-progress {
+    height: 8px;
+    border-radius: 4px;
+    background-color: #e9ecef;
+    overflow: hidden;
+    margin: 1rem 0;
+}
+
+.custom-progress-bar {
+    height: 100%;
+    background-color: var(--stats-success);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+/* Tarjeta de tareas simple */
+.tasks-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    border: var(--card-border);
+    overflow: hidden;
+}
+
+.tasks-card-header {
+    background-color: var(--stats-primary);
+    color: white;
+    padding: 1.5rem;
+    border-bottom: none;
+}
+
+.tasks-card-header h5 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Filtros simples */
+.form-select-custom {
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    background-color: white;
+    color: #333;
+    font-weight: 500;
+    transition: border-color 0.2s ease;
+}
+
+.form-select-custom option {
+    color: #333;
+    font-weight: 500;
+}
+
+.form-select-custom:focus {
+    outline: none;
+    border-color: var(--stats-primary);
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.25);
+}
+
+/* Items de tarea simples */
+.tasks-list {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.task-item {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: all 0.2s ease;
+}
+
+.task-item:hover {
+    border-color: var(--stats-primary);
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.15);
+}
+
+.task-item.completed {
+    background-color: #f8f9fa;
+    opacity: 0.8;
+}
+
+.task-item.completed .task-title {
+    text-decoration: line-through;
+    color: #6c757d;
+}
+
+/* Título de tarea */
+.task-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.task-description {
+    color: #6c757d;
+    font-size: 0.95rem;
+    margin-bottom: 0.8rem;
+}
+
+/* Checkbox simple */
+.custom-checkbox {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #ced4da;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    appearance: none;
+    position: relative;
+}
+
+.custom-checkbox:checked {
+    background-color: var(--stats-success);
+    border-color: var(--stats-success);
+}
+
+.custom-checkbox:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+/* Badges de prioridad simples */
+.priority-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 16px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.priority-badge.high {
+    background-color: #fee;
+    color: #dc3545;
+    border: 1px solid #f5c6cb;
+}
+
+.priority-badge.medium {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.priority-badge.low {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+/* Botones simples */
+.btn-primary-custom {
+    background-color: var(--stats-primary);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.2s ease;
+}
+
+.btn-primary-custom:hover {
+    background-color: #2980b9;
+    color: white;
+    text-decoration: none;
+}
+
+/* Estado vacío simple */
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: white;
+    border-radius: 12px;
+    margin: 2rem 0;
+    border: 1px solid #e9ecef;
+}
+
+.empty-state-icon {
+    width: 60px;
+    height: 60px;
+    background-color: var(--stats-primary);
+    border-radius: 50%;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.empty-state h4 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.empty-state p {
+    color: #6c757d;
+    margin-bottom: 1.5rem;
+}
+
+/* Dropdown simple */
+.custom-dropdown {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e9ecef;
+    overflow: hidden;
+}
+
+.custom-dropdown .dropdown-item {
+    padding: 0.75rem 1rem;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #f8f9fa;
+    color: #333;
+    font-weight: 500;
+}
+
+.custom-dropdown .dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.custom-dropdown .dropdown-item.text-danger {
+    color: #dc3545 !important;
+}
+
+.custom-dropdown .dropdown-item.text-danger:hover {
+    background-color: #f8f9fa;
+    color: #dc3545 !important;
+}
+
+.custom-dropdown .dropdown-item:last-child {
+    border-bottom: none;
+}
+
+/* Responsive simple */
+@media (max-width: 768px) {
+    .main-container {
+        padding: 1rem 0;
+    }
+    
+    .stats-card {
+        margin-bottom: 1.5rem;
+        padding: 1.5rem;
+    }
+    
+    .task-item {
+        padding: 1rem;
+        margin-bottom: 0.8rem;
+    }
+    
+    .task-title {
+        font-size: 1rem;
+    }
+    
+    .stat-item h3 {
+        font-size: 1.8rem;
+    }
+    
+    .tasks-list {
+        max-height: 50vh;
+    }
+}
+
+@media (max-width: 576px) {
+    .stats-card {
+        padding: 1rem;
+    }
+    
+    .stat-item {
+        padding: 1rem;
+    }
+    
+    .task-item {
+        padding: 0.8rem;
+    }
+}

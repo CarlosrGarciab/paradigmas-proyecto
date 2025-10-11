@@ -1,0 +1,352 @@
+/* ===== EDIT_TASK.CSS - EDICIÓN SIMPLE ===== */
+
+/* Variables para editar tarea */
+:root {
+    --edit-bg: #ffffff;
+    --edit-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --edit-border: 1px solid #e9ecef;
+    --edit-primary: #f39c12;
+    --edit-success: #27ae60;
+    --edit-danger: #e74c3c;
+    --edit-secondary: #6c757d;
+}
+
+/* Layout simple */
+.edit-task-container {
+    background-color: #f8f9fa;
+    min-height: calc(100vh - 60px);
+    padding: 2rem 0;
+}
+
+/* Formulario de edición simple */
+.edit-form-container {
+    background: var(--edit-bg);
+    border-radius: 12px;
+    padding: 2.5rem;
+    box-shadow: var(--edit-shadow);
+    border: var(--edit-border);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Encabezado de edición simple */
+.edit-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.edit-header h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.edit-header .subtitle {
+    color: #6c757d;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.edit-header .task-info {
+    background-color: var(--edit-primary);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+/* Grupos de formulario para edición */
+.edit-form-group {
+    margin-bottom: 1.5rem;
+}
+
+.edit-label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+/* Campos de entrada para edición */
+.edit-control {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    background: white;
+    font-family: inherit;
+}
+
+.edit-control:focus {
+    outline: none;
+    border-color: var(--edit-primary);
+    box-shadow: 0 0 0 2px rgba(243, 156, 18, 0.25);
+}
+
+.edit-control::placeholder {
+    color: #adb5bd;
+    font-style: italic;
+}
+
+/* Textarea de edición */
+.edit-control.textarea {
+    min-height: 100px;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+/* Select de edición */
+.edit-select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.edit-select:focus {
+    outline: none;
+    border-color: var(--edit-primary);
+    box-shadow: 0 0 0 2px rgba(243, 156, 18, 0.25);
+}
+
+/* Indicadores de prioridad simples */
+.priority-visual {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.priority-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.priority-dot.high {
+    background-color: #e74c3c;
+}
+
+.priority-dot.medium {
+    background-color: #f39c12;
+}
+
+.priority-dot.low {
+    background-color: #27ae60;
+}
+
+.priority-text {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+/* Estado de tarea simple */
+.task-status {
+    background-color: #3498db;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.task-status.completed {
+    background-color: var(--edit-success);
+}
+
+/* Botones de edición simples */
+.edit-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.btn-edit-custom {
+    padding: 0.5rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    min-width: 100px;
+}
+
+.btn-update-custom {
+    background-color: var(--edit-primary);
+    color: white;
+}
+
+.btn-update-custom:hover {
+    background-color: #e67e22;
+    color: white;
+}
+
+.btn-delete-custom {
+    background-color: var(--edit-danger);
+    color: white;
+}
+
+.btn-delete-custom:hover {
+    background-color: #c0392b;
+    color: white;
+}
+
+.btn-back-custom {
+    background-color: var(--edit-secondary);
+    color: white;
+    text-decoration: none;
+}
+
+.btn-back-custom:hover {
+    background-color: #5a6268;
+    color: white;
+    text-decoration: none;
+}
+
+/* Modal simple */
+.custom-modal {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.custom-modal-content {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    border: none;
+}
+
+.modal-header-custom {
+    background-color: var(--edit-primary);
+    color: white;
+    padding: 1rem 1.5rem;
+    margin: -2rem -2rem 1.5rem -2rem;
+    border-radius: 12px 12px 0 0;
+}
+
+.modal-header-custom h5 {
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+/* Estados de error simples */
+.edit-control.error {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25);
+}
+
+.field-error {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    font-weight: 500;
+}
+
+/* Información de la tarea */
+.edit-history {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.edit-history h6 {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.history-item {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background-color: white;
+    border-radius: 6px;
+    border-left: 3px solid var(--edit-primary);
+}
+
+
+.history-label {
+    color: #333;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+.history-value {
+    color: #333;
+    font-weight: 500;
+    font-size: 0.95rem;
+    margin-left: 0.5rem;
+}
+
+/* Responsive para edición */
+@media (max-width: 768px) {
+    .edit-task-container {
+        padding: 1rem;
+    }
+    
+    .edit-form-container {
+        padding: 2rem 1.5rem;
+        margin: 1rem;
+    }
+    
+    .edit-header h2 {
+        font-size: 1.75rem;
+    }
+    
+    .edit-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn-edit-custom {
+        width: 100%;
+        max-width: 250px;
+    }
+}
+
+@media (max-width: 576px) {
+    .edit-form-container {
+        padding: 1.5rem 1rem;
+        margin: 0.5rem;
+    }
+    
+    .edit-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .edit-control,
+    .edit-select {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.95rem;
+    }
+    
+    .btn-edit-custom {
+        padding: 0.6rem 1.5rem;
+        font-size: 0.95rem;
+    }
+}
